@@ -28,7 +28,75 @@ export const generateBotResponse = (message) => {
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
+
+
+
+
+    // ============== Weather Functioning (Arun) ====================
+    else if (
+        userMessage.includes("weather") ||
+        userMessage.includes("temperature") ||
+        userMessage.includes("rain") ||
+        userMessage.includes("climate") ||
+        userMessage.includes("forecast") ||
+        userMessage.includes("radar") ||
+        userMessage.includes("cloud")
+    ) {
+
+        const apiKey = "9cae3805331d347f02493199ce5e540f";
+
+        // Getting city name
+        let location;
+        if(userMessage.includes("in")){
+            location = userMessage.split(" in ")[1]?.trim()
+        }
+        else if(userMessage.includes("of")){
+            location = userMessage.split(" of ")[1]?.trim();
+        }
+
+        // Responces 
+        let responses = [];
+
+        // If input format is correct
+        if(location){
+
+            // Trying to fetch API
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${apiKey}`)
+            .then((responce) => responce.json()).then((data) => {
+                
+                // If responce is valid
+                if(data.cod === 200){
+                    const temp = data.main.temp;
+                    const weatherCondition = data.weather[0].description;
+
+                    responses.push(`Weather in ${data.name} is ${weatherCondition} and the temperature is ${temp}°C`);
+                    // responses.push(`${data.name}'s Weather is ${weatherCondition} with a temperature of ${temp}°C`);
+                    // responses.push(`Temperature of ${data.name} is ${temp}°C and the condition of Weather is ${weatherCondition}`);
+                }
+
+                // If responce is invalid
+                else{
+                    responses.push(`Sorry, I'm unable to find weather update for ${location}`);
+                }
+
+            // If failed to fetch API
+            }).catch((error) => {
+                responses.push(`Something went wrong. Please try again later.`);
+            });
+        
+        // For unknown weather input 
+        }
+        else{
+            responses.push(`Please provide a location.`);
+        }
+
+        // Returning responces
+        return responses;
+    }
+
+
     else {
         return "I didn't understand that.";
     }
 };
+
