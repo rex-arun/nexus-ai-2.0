@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { handleUserInput, handleVoiceInput } from "./chatFunctions"; // Import the helper functions
+import { handleUserInput, handleVoiceInput } from "./Helper/chatFunctions";
+import 'remixicon/fonts/remixicon.css'
 import "./Chatbox.css";
 import "./Chatbox2.css";
 
@@ -8,13 +9,14 @@ export default function Chatbox() {
     const [selectedPrompt, setSelectedPrompt] = useState(null);
     const [messages, setMessages] = useState([]);
     const [chatStarted, setChatStarted] = useState(false);
-    const [isVoiceMode, setIsVoiceMode] = useState(false);
-    const [isListening, setIsListening] = useState(false);
+    const [isVoiceMode, setIsVoiceMode] = useState(false); 
+    const [isListening, setIsListening] = useState(false); 
 
     const chatContainerRef = useRef(null);
-    const recognition = useRef(null);
 
-    // Initialize speech recognition API if available
+    const recognition = useRef(null); 
+
+    // ========= Initialize speech recognition API ==========
     useEffect(() => {
         if ("webkitSpeechRecognition" in window) {
             recognition.current = new window.webkitSpeechRecognition();
@@ -25,39 +27,73 @@ export default function Chatbox() {
             recognition.current.onstart = () => setIsListening(true);
             recognition.current.onend = () => setIsListening(false);
             recognition.current.onresult = (event) =>
-                handleVoiceInput(event, messages, setMessages, speak); // Use the imported voice input handler
+                handleVoiceInput(event, setMessages, speak);
         }
-    }, [messages]); // Add messages as a dependency to ensure the latest state is used
+    }, []);
 
-    // Function to speak the bot's response
-    const speak = (response) => {
-        if ("speechSynthesis" in window) {
-            const utterance = new SpeechSynthesisUtterance(response);
-            speechSynthesis.speak(utterance);
+    // Handle input change
+    const handleInputChange = (event) => {
+        if (event.target.value.trim() !== "") {
+            setIsTyping(true);
+        } else {
+            setIsTyping(false);
         }
     };
 
-    // Function to start voice input
+    // Handle user input
+    const handleUserInputWrapper = (event) => {
+        handleUserInput(
+            event,
+            messages,
+            setMessages,
+            setIsTyping,
+            setChatStarted,
+            isVoiceMode,
+            speak
+        );
+    };
+
+    // Start voice input
     const startVoiceInput = () => {
         if (recognition.current) {
             recognition.current.start();
         }
     };
 
-    // Function to stop voice input
+    // Stop voice input
     const stopVoiceInput = () => {
         if (recognition.current) {
             recognition.current.stop();
         }
     };
 
-    // Function to toggle voice mode
+    // Speak the response
+    const speak = (response) => {
+        if ("speechSynthesis" in window) {
+            const utterance = new SpeechSynthesisUtterance(response);
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            utterance.volume = 1; 
+            utterance.lang = "hi-GB";
+            speechSynthesis.speak(utterance);
+        }
+    };
+
+    // Effect to scroll
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop =
+                chatContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    // Toggle voice mode
     const toggleVoiceMode = () => {
         setIsVoiceMode(true);
         startVoiceInput();
     };
 
-    // Function to close voice mode
+    // Close voice mode
     const closeVoiceMode = () => {
         setIsVoiceMode(false);
         stopVoiceInput();
@@ -65,7 +101,7 @@ export default function Chatbox() {
 
     return (
         <>
-            {/* Voice Mode UI */}
+            {/* ======= Voice Mode UI ========== */}
             {isVoiceMode ? (
                 <div className="voice-mode">
                     <div className="voice-animation">
@@ -74,12 +110,12 @@ export default function Chatbox() {
                         <div className="line"></div>
                     </div>
                     <div className="close-button" onClick={closeVoiceMode}>
-                        <i className="ri-close-line"></i>
+                        <i className="ri-close-line"></i>{" "}
                     </div>
                 </div>
             ) : (
                 <>
-                    {/* Header Section */}
+                    {/* Header section (Render if mgs array is empty) */}
                     {!chatStarted && (
                         <div className="header-section">
                             <h1>
@@ -87,6 +123,7 @@ export default function Chatbox() {
                                 <br />
                                 I'm Here to Help...
                             </h1>
+
                             <div className="promt">
                                 <div
                                     className="promt1"
@@ -125,7 +162,7 @@ export default function Chatbox() {
                         </div>
                     )}
 
-                    {/* Chat Messages */}
+                    {/* =============== Chat messages UI ============ */}
                     <div className="chat-section" ref={chatContainerRef}>
                         {messages.map((message, index) => (
                             <div
@@ -137,25 +174,16 @@ export default function Chatbox() {
                         ))}
                     </div>
 
-                    {/* Input Section */}
+                    {/* ============ Input section ========= */}
                     <div className="input-section-container">
                         <div className="input-container">
                             <input
                                 type="text"
                                 placeholder="Start a conversation..."
-                                onChange={(e) =>
-                                    setIsTyping(e.target.value.trim() !== "")
-                                }
-                                onKeyDown={(e) =>
-                                    handleUserInput(
-                                        e,
-                                        messages,
-                                        setMessages,
-                                        isVoiceMode,
-                                        speak
-                                    ) // Call the imported user input handler
-                                }
+                                onChange={handleInputChange}
+                                onKeyDown={handleUserInputWrapper}
                             />
+
                             <div className="icons">
                                 {!isTyping && (
                                     <>
@@ -163,7 +191,7 @@ export default function Chatbox() {
                                         <i
                                             className="ri-voice-ai-line"
                                             onClick={toggleVoiceMode}
-                                        ></i>
+                                        ></i>{" "}
                                     </>
                                 )}
 
