@@ -162,4 +162,13 @@
     cursor: pointer;
 }
 
+.mic-button{
+    all: unset;
+    position: absolute;
+    bottom: 10%;
+}
 
+.mic-button i {
+    color: white;
+    font-size: 36px;
+}

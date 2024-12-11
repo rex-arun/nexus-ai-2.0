@@ -41,7 +41,7 @@ export default function Chatbox() {
     useEffect(() => {
         const handleSpacebarPress = (event) => {
             if (isVoiceMode && event.code === "Space") {
-                startVoiceInput(); // Trigger voice input when spacebar is pressed
+                startVoiceInput(); 
             }
         };
 
@@ -204,7 +204,7 @@ export default function Chatbox() {
             chatContainerRef.current.scrollTop =
                 chatContainerRef.current.scrollHeight;
         }
-    }, [messages]);
+    }, [messages, isVoiceMode]);
 
     // Toggle voice mode
     const toggleVoiceMode = () => {
