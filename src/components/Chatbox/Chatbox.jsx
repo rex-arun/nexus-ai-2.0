@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { handleUserInput, handleVoiceInput } from "./chatFunctions"; // Import the helper functions
 import "./Chatbox.css";
 import "./Chatbox2.css";
 
@@ -7,12 +8,11 @@ export default function Chatbox() {
     const [selectedPrompt, setSelectedPrompt] = useState(null);
     const [messages, setMessages] = useState([]);
     const [chatStarted, setChatStarted] = useState(false);
-    const [isVoiceMode, setIsVoiceMode] = useState(false); // New state for voice mode
-    const [isListening, setIsListening] = useState(false); // State for checking if speech input is active
+    const [isVoiceMode, setIsVoiceMode] = useState(false);
+    const [isListening, setIsListening] = useState(false);
 
     const chatContainerRef = useRef(null);
-
-    const recognition = useRef(null); // Ref to hold speech recognition instance
+    const recognition = useRef(null);
 
     // Initialize speech recognition API if available
     useEffect(() => {
@@ -24,116 +24,16 @@ export default function Chatbox() {
 
             recognition.current.onstart = () => setIsListening(true);
             recognition.current.onend = () => setIsListening(false);
-            recognition.current.onresult = handleVoiceInput;
+            recognition.current.onresult = (event) =>
+                handleVoiceInput(event, messages, setMessages, speak); // Use the imported voice input handler
         }
-    }, []);
+    }, [messages]); // Add messages as a dependency to ensure the latest state is used
 
-    // Function to handle input change
-    const handleInputChange = (event) => {
-        if (event.target.value.trim() !== "") {
-            setIsTyping(true);
-        } else {
-            setIsTyping(false);
-        }
-    };
-
-    // Function to handle user input
-    const handleUserInput = (event) => {
-        if (event.key === "Enter" && event.target.value.trim() !== "") {
-            const userMessage = event.target.value.trim().toLowerCase();
-            let botResponse = "";
-
-            // Handle various responses
-            if (
-                userMessage.includes("hello") ||
-                userMessage.includes("hey") ||
-                userMessage.includes("hi")
-            ) {
-                botResponse = "Hello! How can I help you?";
-            } else if (userMessage.includes("how are you")) {
-                const responses = [
-                    "I'm doing great, thanks for asking! How about you?",
-                    "I'm just a bunch of code, but I’m feeling awesome! How are you?",
-                    "I'm functioning at full capacity, ready to assist you! How are you?",
-                ];
-                botResponse =
-                    responses[Math.floor(Math.random() * responses.length)];
-            } else if (
-                userMessage.includes("what's up") ||
-                userMessage.includes("what is up")
-            ) {
-                const responses = [
-                    "Not much, just here to help you out! What's up with you?",
-                    "Just hanging out in the cloud, you know. What's going on?",
-                    "I'm always up, ready to assist. How can I help today?",
-                ];
-                botResponse =
-                    responses[Math.floor(Math.random() * responses.length)];
-            } else {
-                botResponse = "I didn't understand that.";
-            }
-
-            setMessages([
-                ...messages,
-                { text: userMessage, sender: "user" },
-                { text: botResponse, sender: "bot" },
-            ]);
-            event.target.value = "";
-            setIsTyping(false);
-            setChatStarted(true);
-
-            // Only speak if in voice mode
-            if (isVoiceMode) {
-                speak(botResponse);
-            }
-        }
-    };
-
-    // Function to handle voice input when recognition results are available
-    // Function to handle voice input when recognition results are available
-    const handleVoiceInput = (event) => {
-        const transcript =
-            event.results[event.resultIndex][0].transcript.toLowerCase();
-        if (event.results[event.resultIndex].isFinal) {
-            let botResponse = "";
-
-            if (
-                transcript.includes("hello") ||
-                transcript.includes("hey") ||
-                transcript.includes("hi")
-            ) {
-                botResponse = "Hello! How can I help you?";
-            } else if (transcript.includes("how are you")) {
-                const responses = [
-                    "I'm doing great, thanks for asking! How about you?",
-                    "I'm just a bunch of code, but I’m feeling awesome! How are you?",
-                    "I'm functioning at full capacity, ready to assist you! How are you?",
-                ];
-                botResponse =
-                    responses[Math.floor(Math.random() * responses.length)];
-            } else if (
-                transcript.includes("what's up") ||
-                transcript.includes("what is up")
-            ) {
-                const responses = [
-                    "Not much, just here to help you out! What's up with you?",
-                    "Just hanging out in the cloud, you know. What's going on?",
-                    "I'm always up, ready to assist. How can I help today?",
-                ];
-                botResponse =
-                    responses[Math.floor(Math.random() * responses.length)];
-            } else {
-                botResponse = "I didn't understand that.";
-            }
-
-            // Add both user and bot messages to the state, preserving previous messages
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { text: transcript, sender: "user" },
-                { text: botResponse, sender: "bot" },
-            ]);
-
-            speak(botResponse); // Ensure bot response is spoken as well
+    // Function to speak the bot's response
+    const speak = (response) => {
+        if ("speechSynthesis" in window) {
+            const utterance = new SpeechSynthesisUtterance(response);
+            speechSynthesis.speak(utterance);
         }
     };
 
@@ -151,32 +51,16 @@ export default function Chatbox() {
         }
     };
 
-    // Function to speak the bot's response
-    const speak = (response) => {
-        if ("speechSynthesis" in window) {
-            const utterance = new SpeechSynthesisUtterance(response);
-            speechSynthesis.speak(utterance);
-        }
-    };
-
-    // Effect to scroll
-    useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop =
-                chatContainerRef.current.scrollHeight;
-        }
-    }, [messages]);
-
     // Function to toggle voice mode
     const toggleVoiceMode = () => {
         setIsVoiceMode(true);
-        startVoiceInput(); // Start listening for voice input when voice mode is activated
+        startVoiceInput();
     };
 
     // Function to close voice mode
     const closeVoiceMode = () => {
         setIsVoiceMode(false);
-        stopVoiceInput(); // Stop voice input when voice mode is closed
+        stopVoiceInput();
     };
 
     return (
@@ -190,13 +74,12 @@ export default function Chatbox() {
                         <div className="line"></div>
                     </div>
                     <div className="close-button" onClick={closeVoiceMode}>
-                        <i className="ri-close-line"></i>{" "}
-                        {/* Cross icon to close */}
+                        <i className="ri-close-line"></i>
                     </div>
                 </div>
             ) : (
                 <>
-                    {/* Header section is conditionally rendered */}
+                    {/* Header Section */}
                     {!chatStarted && (
                         <div className="header-section">
                             <h1>
@@ -204,7 +87,6 @@ export default function Chatbox() {
                                 <br />
                                 I'm Here to Help...
                             </h1>
-
                             <div className="promt">
                                 <div
                                     className="promt1"
@@ -243,7 +125,7 @@ export default function Chatbox() {
                         </div>
                     )}
 
-                    {/* Chat messages */}
+                    {/* Chat Messages */}
                     <div className="chat-section" ref={chatContainerRef}>
                         {messages.map((message, index) => (
                             <div
@@ -255,16 +137,25 @@ export default function Chatbox() {
                         ))}
                     </div>
 
-                    {/* Input section */}
+                    {/* Input Section */}
                     <div className="input-section-container">
                         <div className="input-container">
                             <input
                                 type="text"
                                 placeholder="Start a conversation..."
-                                onChange={handleInputChange}
-                                onKeyDown={handleUserInput}
+                                onChange={(e) =>
+                                    setIsTyping(e.target.value.trim() !== "")
+                                }
+                                onKeyDown={(e) =>
+                                    handleUserInput(
+                                        e,
+                                        messages,
+                                        setMessages,
+                                        isVoiceMode,
+                                        speak
+                                    ) // Call the imported user input handler
+                                }
                             />
-
                             <div className="icons">
                                 {!isTyping && (
                                     <>
@@ -272,8 +163,7 @@ export default function Chatbox() {
                                         <i
                                             className="ri-voice-ai-line"
                                             onClick={toggleVoiceMode}
-                                        ></i>{" "}
-                                        {/* Add click handler to start voice mode */}
+                                        ></i>
                                     </>
                                 )}
 
