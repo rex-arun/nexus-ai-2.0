@@ -36,14 +36,16 @@ export const handleUserInput = (
 export const handleVoiceInput = (
     event,
     setMessages,
-    speak
+    speak,
+    setChatStarted
 ) => {
     const transcript =
         event.results[event.resultIndex][0].transcript.toLowerCase();
 
     if (event.results[event.resultIndex].isFinal) {
         const botResponse = generateBotResponse(transcript);  // Get bot's response
-
+        setChatStarted(true);
+        
         setMessages((prevMessages) => [
             ...prevMessages,
             { text: transcript, sender: "user" },

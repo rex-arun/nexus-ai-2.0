@@ -1,41 +1,109 @@
+/* ========== Chat section ============ */
 .chat-section {
-   padding: 20px;
-   max-height: 80vh;
-   overflow-y: auto;
-   width: 60rem;
-   display: flex;
-   flex-direction: column;
-   gap: 10px;
-   /* background-color: red; */
-   position: absolute;
-   top: 0;
-   left: 50%;
-   transform: translateX(-50%);
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+    width: 60rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .message {
-   padding: 10px;
-   border-radius: 15px;
-   max-width: 80%;
-   word-wrap: break-word;
-   font-size: 16px;
-   display: inline-block;
+    padding: 10px;
+    border-radius: 15px;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 16px;
+    display: inline-block;
 }
 
 .message.user {
-   background-color: #4CAF50;
-   color: white;
-   align-self: flex-end;
+    background-color: #4CAF50; 
+    color: white;
+    align-self: flex-end;
 }
 
 .message.bot {
-   background-color: #2196F3;
-   color: white;
-   align-self: flex-start;
+    background-color: #2196F3;
+    color: white;
+    align-self: flex-start; 
+}
+
+.message img {
+    width: 300px;
+    height: auto; 
+    border-radius: 10px; 
+    margin-top: 5px; 
+}
+
+.message img:hover {
+    opacity: 0.8;
+    transition: opacity 0.3s; 
+}
+
+.image-box{
+    position: relative;
+}
+
+.download-button {
+    all: unset;
+    position: absolute;
+    margin-top: 10px; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    background-color: #1976D2;
+    cursor: pointer; 
+    transition: all 0.3s; 
+}
+
+.download-button i{
+    color: black;
+}
+
+.download-button:hover {
+    background-color: #1976D2; 
 }
 
 
 
+.loading {
+    display: inline-block;
+}
+
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: currentColor;
+    animation: loading 1s infinite;
+}
+
+@keyframes loading {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* =========== Voice-mode ========== */
 .voice-mode {
     display: flex;
     justify-content: center;
@@ -93,3 +161,5 @@
     color: white;
     cursor: pointer;
 }
+
+

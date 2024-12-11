@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { handleUserInput, handleVoiceInput } from "./Helper/chatFunctions";
-import 'remixicon/fonts/remixicon.css'
+import "remixicon/fonts/remixicon.css";
 import "./Chatbox.css";
 import "./Chatbox2.css";
 
@@ -9,27 +9,48 @@ export default function Chatbox() {
     const [selectedPrompt, setSelectedPrompt] = useState(null);
     const [messages, setMessages] = useState([]);
     const [chatStarted, setChatStarted] = useState(false);
-    const [isVoiceMode, setIsVoiceMode] = useState(false); 
-    const [isListening, setIsListening] = useState(false); 
-
+    const [isVoiceMode, setIsVoiceMode] = useState(false);
+    const [isListening, setIsListening] = useState(false);
+    const inputRef = useRef(null);
+    const [inputValue, setInputValue] = useState("");
     const chatContainerRef = useRef(null);
-
-    const recognition = useRef(null); 
+    const recognition = useRef(null);
 
     // ========= Initialize speech recognition API ==========
     useEffect(() => {
         if ("webkitSpeechRecognition" in window) {
             recognition.current = new window.webkitSpeechRecognition();
-            recognition.current.continuous = true;
+            recognition.current.continuous = false; 
             recognition.current.interimResults = true;
             recognition.current.lang = "en-US";
 
             recognition.current.onstart = () => setIsListening(true);
             recognition.current.onend = () => setIsListening(false);
-            recognition.current.onresult = (event) =>
-                handleVoiceInput(event, setMessages, speak);
+            recognition.current.onresult = (event) => {
+                handleVoiceInput(event, setMessages, speak, setChatStarted);
+                stopVoiceInput(); 
+            
+                if (chatContainerRef.current) {
+                    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                }
+            };
         }
     }, []);
+
+    // Spacebar triggering the mic
+    useEffect(() => {
+        const handleSpacebarPress = (event) => {
+            if (isVoiceMode && event.code === "Space") {
+                startVoiceInput(); // Trigger voice input when spacebar is pressed
+            }
+        };
+
+        window.addEventListener("keydown", handleSpacebarPress);
+
+        return () => {
+            window.removeEventListener("keydown", handleSpacebarPress);
+        };
+    }, [isVoiceMode]); 
 
     // Handle input change
     const handleInputChange = (event) => {
@@ -40,17 +61,115 @@ export default function Chatbox() {
         }
     };
 
-    // Handle user input
+    // Handle user input 
     const handleUserInputWrapper = (event) => {
-        handleUserInput(
-            event,
-            messages,
-            setMessages,
-            setIsTyping,
-            setChatStarted,
-            isVoiceMode,
-            speak
+        if (event.key === "Enter") {
+            const inputValue = event.target.value.trim();
+            sendMessage(inputValue); 
+        }
+    };
+
+    // =========== Send Input to Voice / Text / Image functions =============
+    const sendMessage = async (inputValue) => {
+        if (inputValue.trim() === "") return; 
+
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: "user", text: inputValue },
+        ]);
+
+        setChatStarted(true);
+
+        if (inputValue.startsWith("image/prompt:")) {
+            const prompt = inputValue.replace("image/prompt:", "").trim();
+
+            setInputValue(""); 
+
+            // Add a message with a loading animation
+            const loadingMessage = {
+                sender: "bot",
+                text: "Generating image...",
+            };
+            setMessages((prevMessages) => [...prevMessages, loadingMessage]);
+
+            try {
+                // API call to generate image
+                const imageUrl = await generateImage(prompt);
+                if (imageUrl) {
+                    // Replace loading message with the generated image
+                    setMessages((prevMessages) => [
+                        ...prevMessages.slice(0, -1), 
+                        {
+                            sender: "bot",
+                            text: `Here's the image:`,
+                            imageUrl: imageUrl,
+                        },
+                    ]);
+                } else {
+                    setMessages((prevMessages) => [
+                        ...prevMessages.slice(0, -1),
+                        {
+                            sender: "bot",
+                            text: "Sorry, I couldn't generate the image.",
+                        },
+                    ]);
+                }
+            } catch (error) {
+                setMessages((prevMessages) => [
+                    ...prevMessages.slice(0, -1), 
+                    { sender: "bot", text: "Error generating image." },
+                ]);
+                console.error("Error generating image:", error);
+            }
+        } else {
+            handleUserInput(
+                { key: "Enter", target: { value: inputValue } }, 
+                messages,
+                setMessages,
+                setIsTyping,
+                setChatStarted,
+                isVoiceMode,
+                speak
+            );
+        }
+
+        setInputValue(""); 
+        setIsTyping(false);
+    };
+
+    // Hugging Face API Call(Text to Image)
+    const generateImage = async (prompt) => {
+        const token = "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"; // Make sure to set your token here
+        const response = await fetch(
+            "https://api-inference.huggingface.co/models/ZB-Tech/Text-to-Image",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify({ inputs: prompt }),
+            }
         );
+
+        if (response.ok) {
+            const result = await response.blob(); 
+            const imageUrl = URL.createObjectURL(result);
+            return imageUrl;
+        } else {
+            console.error("Error generating image:", response.status);
+            return null;
+        }
+    };
+
+    // Download the image
+    const downloadImage = (url) => {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "nexa-image.png"; 
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     // Start voice input
@@ -73,7 +192,7 @@ export default function Chatbox() {
             const utterance = new SpeechSynthesisUtterance(response);
             utterance.rate = 1;
             utterance.pitch = 1;
-            utterance.volume = 1; 
+            utterance.volume = 1;
             utterance.lang = "hi-GB";
             speechSynthesis.speak(utterance);
         }
@@ -112,6 +231,9 @@ export default function Chatbox() {
                     <div className="close-button" onClick={closeVoiceMode}>
                         <i className="ri-close-line"></i>{" "}
                     </div>
+                    <button className="mic-button" onClick={startVoiceInput}>
+                        <i className="ri-mic-line"></i>{" "}
+                    </button>
                 </div>
             ) : (
                 <>
@@ -170,6 +292,23 @@ export default function Chatbox() {
                                 className={`message ${message.sender}`}
                             >
                                 <p>{message.text}</p>
+                                {message.imageUrl && (
+                                    <div className="image-box">
+                                        <img
+                                            src={message.imageUrl}
+                                            alt="Generated"
+                                            className="mx-auto rounded-lg shadow-lg"
+                                        />
+                                        <button
+                                            onClick={() =>
+                                                downloadImage(message.imageUrl)
+                                            }
+                                            className="download-button"
+                                        >
+                                            <i className="ri-download-fill"></i>
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -180,24 +319,48 @@ export default function Chatbox() {
                             <input
                                 type="text"
                                 placeholder="Start a conversation..."
-                                onChange={handleInputChange}
+                                value={inputValue} 
+                                onChange={(e) => {
+                                    setInputValue(e.target.value);
+                                    handleInputChange(e);
+                                }}
                                 onKeyDown={handleUserInputWrapper}
+                                ref={inputRef}
                             />
 
                             <div className="icons">
                                 {!isTyping && (
                                     <>
-                                        <i className="ri-links-line"></i>
+                                        <i
+                                            className="ri-image-ai-fill"
+                                            onClick={() => {
+                                                const inputField =
+                                                    document.querySelector(
+                                                        ".input-container input"
+                                                    );
+                                                if (inputField) {
+                                                    inputField.value = `image/prompt: ${inputField.value}`;
+                                                    inputField.focus();
+                                                }
+                                            }}
+                                        ></i>
                                         <i
                                             className="ri-voice-ai-line"
                                             onClick={toggleVoiceMode}
-                                        ></i>{" "}
+                                        ></i>
                                     </>
                                 )}
 
                                 {isTyping && (
                                     <div className="typing-indicator">
-                                        <i className="ri-send-plane-fill"></i>
+                                        <i
+                                            className="ri-send-plane-fill"
+                                            onClick={() => {
+                                                const inputValue =
+                                                    inputRef.current.value.trim();
+                                                sendMessage(inputValue); // Call sendMessage with the input value
+                                            }}
+                                        ></i>
                                     </div>
                                 )}
                             </div>
