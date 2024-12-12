@@ -8,7 +8,8 @@ export const generateBotResponse = (message) => {
     if (
         userMessage.includes("hello") ||
         userMessage.includes("hey") ||
-        userMessage.includes("hi")
+        userMessage.includes("hi there") ||
+        userMessage=="hi"
     ) {
         return "Hello! How can I help you?";
     }
