@@ -172,3 +172,13 @@
     color: white;
     font-size: 36px;
 }
+
+
+
+.button-active{
+    background-color: green;
+}
+
+.button-deactive{
+    background-color: red;
+}
