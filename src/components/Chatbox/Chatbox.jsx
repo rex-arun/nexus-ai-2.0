@@ -255,7 +255,9 @@ export default function Chatbox() {
                         }}
                     >
                         <i
-                            className={`ri-mic-${isMicOn ? "fill" : "off-fill"}`}
+                            className={`ri-mic-${
+                                isMicOn ? "fill" : "off-fill"
+                            }`}
                         ></i>
                     </button>
                 </div>
@@ -313,9 +315,19 @@ export default function Chatbox() {
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`message ${message.sender}`}
+                                className={`message ${message.sender} ${
+                                    message.className || ""
+                                }`}
                             >
-                                <p>{message.text}</p>
+                                {message.isLoading ? (
+                                    <div className="loading-dots">
+                                        <span className="dot"></span>
+                                        <span className="dot"></span>
+                                        <span className="dot"></span>
+                                    </div>
+                                ) : (
+                                    <p>{message.text}</p>
+                                )}
                                 {message.imageUrl && (
                                     <div className="image-box">
                                         <img

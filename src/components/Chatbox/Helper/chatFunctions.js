@@ -11,7 +11,7 @@ export const handleUserInput = async (event, messages, setMessages, setIsTyping,
         ]);
 
         // Add a loading indicator for the bot's response
-        const loadingMessage = { sender: "bot", text: "...", isLoading: true };
+        const loadingMessage = { sender: "bot", text: "", isLoading: true, className: "loading-dots" };
         setMessages((prevMessages) => [...prevMessages, loadingMessage]);
 
         event.target.value = "";
@@ -59,7 +59,7 @@ export const handleVoiceInput = async (event, setMessages, speak, setChatStarted
         ]);
 
         // Add a loading indicator for the bot's response
-        const loadingMessage = { sender: "bot", text: "...", isLoading: true };
+        const loadingMessage = { sender: "bot", text: "", isLoading: true, className: "loading-dots" };
         setMessages((prevMessages) => [...prevMessages, loadingMessage]);
 
         setChatStarted(true);
