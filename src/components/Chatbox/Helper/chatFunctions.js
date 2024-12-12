@@ -4,26 +4,39 @@ export const handleUserInput = async (event, messages, setMessages, setIsTyping,
     if (event.key === "Enter" && event.target.value.trim() !== "") {
         const userMessage = event.target.value.trim();
 
-
+        // Add user message to the state
         setMessages((prevMessages) => [
             ...prevMessages,
             { sender: "user", text: userMessage },
         ]);
-        // Only add the user message to the messages state once
-        const botResponses = await generateBotResponse(userMessage); // Get bot's response
 
-        setMessages((prevMessages) => [
-            ...prevMessages,
-            // { text: userMessage, sender: "user" }, // Add user message
-            ...botResponses.map(response => ({ text: response, sender: "bot" })), // Add bot responses
-        ]);
+        // Add a loading indicator for the bot's response
+        const loadingMessage = { sender: "bot", text: "...", isLoading: true };
+        setMessages((prevMessages) => [...prevMessages, loadingMessage]);
 
         event.target.value = "";
         setIsTyping(false);
         setChatStarted(true);
 
-        if (isVoiceMode) {
-            speak(botResponses.join(" ")); // Speak the concatenated bot responses
+        try {
+            const botResponses = await generateBotResponse(userMessage); // Get bot's response
+
+            // Replace the loading message with actual bot responses
+            setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1), // Remove the loading message
+                ...botResponses.map((response) => ({ text: response, sender: "bot" })),
+            ]);
+
+            if (isVoiceMode) {
+                speak(botResponses.join(" ")); // Speak the concatenated bot responses
+            }
+        } catch (error) {
+            console.error("Error generating bot response:", error);
+            // Replace loading with an error message
+            setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1),
+                { sender: "bot", text: "Sorry, something went wrong." },
+            ]);
         }
     }
 };
@@ -33,15 +46,35 @@ export const handleVoiceInput = async (event, setMessages, speak, setChatStarted
         event.results[event.resultIndex][0].transcript.toLowerCase();
 
     if (event.results[event.resultIndex].isFinal) {
-        const botResponses = await generateBotResponse(transcript); // Get bot's response
-        setChatStarted(true);
-
+        // Add user message to the state
         setMessages((prevMessages) => [
             ...prevMessages,
-            { text: transcript, sender: "user" },
-            ...botResponses.map(response => ({ text: response, sender: "bot" })), // Map responses to messages
+            { sender: "user", text: transcript },
         ]);
 
-        speak(botResponses.join(" ")); // Ensure bot response is spoken as well
+        // Add a loading indicator for the bot's response
+        const loadingMessage = { sender: "bot", text: "...", isLoading: true };
+        setMessages((prevMessages) => [...prevMessages, loadingMessage]);
+
+        setChatStarted(true);
+
+        try {
+            const botResponses = await generateBotResponse(transcript); // Get bot's response
+
+            // Replace the loading message with actual bot responses
+            setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1), // Remove the loading message
+                ...botResponses.map((response) => ({ text: response, sender: "bot" })),
+            ]);
+
+            speak(botResponses.join(" ")); // Ensure bot response is spoken as well
+        } catch (error) {
+            console.error("Error generating bot response:", error);
+            // Replace loading with an error message
+            setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1),
+                { sender: "bot", text: "Sorry, something went wrong." },
+            ]);
+        }
     }
 };
