@@ -37,101 +37,100 @@ export const generateBotResponse = async (message) => {
         return [responses[Math.floor(Math.random() * responses.length)]];
     }
 
-    console.log(`User message: ${userMessage}`);
-     // ========================== Small Game Feature ==========================
-    if (userMessage.includes("play a game")) {
-        console.log("User wants to play a game"); // Debug: Log game request
+    // ========================== Small Game Feature ==========================
+    // else if (userMessage.includes("play a game")) {
+    //     console.log("User wants to play a game"); // Debug: Log game request
 
-        const gameOptions = [
-            "number guessing",
-            "rock paper scissors",
-            "tic tac toe",
-            "trivia challenge",
-            "word scramble",
-            "math quiz",
-            "memory test"
-        ];
+    //     const gameOptions = [
+    //         "number guessing",
+    //         "rock paper scissors",
+    //         "tic tac toe",
+    //         "trivia challenge",
+    //         "word scramble",
+    //         "math quiz",
+    //         "memory test"
+    //     ];
 
-        // Default response for showing available games
-        if (userMessage.includes("play a game")) {
-            response = `🎮 Let's have some fun! Choose a game to play:\n- ${gameOptions.join("\n- ")}\nType the name of the game to start!`;
-            return response;
-        }
+    //     // Default response for showing available games
+    //     if (userMessage.includes("play a game")) {
+    //         response = `🎮 Let's have some fun! Choose a game to play:\n- ${gameOptions.join("\n- ")}\nType the name of the game to start!`;
+    //         return response;
+    //     }
 
-        // Number Guessing Game
-        if (userMessage.includes("number guessing")) {
-            response = `🎲 Let's play a Number Guessing Game!\nI've picked a number between 1 and 100. Try to guess it by typing a number.`;
-            return response;
-        }
+    //     // Number Guessing Game
+    //     if (userMessage.includes("number guessing")) {
+    //         response = `🎲 Let's play a Number Guessing Game!\nI've picked a number between 1 and 100. Try to guess it by typing a number.`;
+    //         return response;
+    //     }
 
-        // Rock Paper Scissors
-        else if (userMessage.includes("rock paper scissors")) {
-            const choices = ["rock", "paper", "scissors"];
-            const botChoice = choices[Math.floor(Math.random() * choices.length)];
-            response = `✊✋✌️ Let's play Rock-Paper-Scissors!\nType your choice (rock, paper, or scissors), and I'll reveal mine.`;
-            return response;
-        }
+    //     // Rock Paper Scissors
+    //     else if (userMessage.includes("rock paper scissors")) {
+    //         const choices = ["rock", "paper", "scissors"];
+    //         const botChoice = choices[Math.floor(Math.random() * choices.length)];
+    //         response = `✊✋✌️ Let's play Rock-Paper-Scissors!\nType your choice (rock, paper, or scissors), and I'll reveal mine.`;
+    //         return response;
+    //     }
 
-        // Tic Tac Toe
-        else if (userMessage.includes("tic tac toe")) {
-            response = `🎮 Let's play Tic Tac Toe!\nUnfortunately, I can't display the board here, but type your moves like 'A1', 'B2', etc., and I'll play along!`;
-            return response;
-        }
+    //     // Tic Tac Toe
+    //     else if (userMessage.includes("tic tac toe")) {
+    //         response = `🎮 Let's play Tic Tac Toe!\nUnfortunately, I can't display the board here, but type your moves like 'A1', 'B2', etc., and I'll play along!`;
+    //         return response;
+    //     }
 
-        // Trivia Challenge
-        else if (userMessage.includes("trivia challenge")) {
-            const triviaQuestions = [
-                { question: "What is the capital of France?", answer: "paris" },
-                { question: "Who wrote 'Romeo and Juliet'?", answer: "shakespeare" },
-                { question: "What is 8 x 12?", answer: "96" },
-                { question: "Who painted the Mona Lisa?", answer: "da vinci" },
-                { question: "What is the largest planet in our solar system?", answer: "jupiter" },
-                { question: "What is the smallest country in the world?", answer: "vatican city" },
-                { question: "Which animal is known as the King of the Jungle?", answer: "lion" },
-                { question: "What is the largest ocean on Earth?", answer: "pacific" },
-                { question: "Who discovered gravity?", answer: "newton" },
-                { question: "What is the chemical symbol for gold?", answer: "au" },
-                { question: "In which year did the Titanic sink?", answer: "1912" },
-                { question: "What is the hardest natural substance on Earth?", answer: "diamond" },
-                { question: "Who was the first president of the United States?", answer: "george washington" },
-                { question: "What is the largest desert in the world?", answer: "sahara" },
-                { question: "What is the longest river in the world?", answer: "amazon" }
-            ];
-            const selectedTrivia = triviaQuestions[Math.floor(Math.random() * triviaQuestions.length)];
-            response = `🧠 Trivia Time!\n${selectedTrivia.question}\nType your answer:`;
-            return response;
-        }
+    //     // Trivia Challenge
+    //     else if (userMessage.includes("trivia challenge")) {
+    //         const triviaQuestions = [
+    //             { question: "What is the capital of France?", answer: "paris" },
+    //             { question: "Who wrote 'Romeo and Juliet'?", answer: "shakespeare" },
+    //             { question: "What is 8 x 12?", answer: "96" },
+    //             { question: "Who painted the Mona Lisa?", answer: "da vinci" },
+    //             { question: "What is the largest planet in our solar system?", answer: "jupiter" },
+    //             { question: "What is the smallest country in the world?", answer: "vatican city" },
+    //             { question: "Which animal is known as the King of the Jungle?", answer: "lion" },
+    //             { question: "What is the largest ocean on Earth?", answer: "pacific" },
+    //             { question: "Who discovered gravity?", answer: "newton" },
+    //             { question: "What is the chemical symbol for gold?", answer: "au" },
+    //             { question: "In which year did the Titanic sink?", answer: "1912" },
+    //             { question: "What is the hardest natural substance on Earth?", answer: "diamond" },
+    //             { question: "Who was the first president of the United States?", answer: "george washington" },
+    //             { question: "What is the largest desert in the world?", answer: "sahara" },
+    //             { question: "What is the longest river in the world?", answer: "amazon" }
+    //         ];
+    //         const selectedTrivia = triviaQuestions[Math.floor(Math.random() * triviaQuestions.length)];
+    //         response = `🧠 Trivia Time!\n${selectedTrivia.question}\nType your answer:`;
+    //         return response;
+    //     }
 
-        // Word Scramble
-        else if (userMessage.includes("word scramble")) {
-            const words = ["javascript", "programming", "developer", "algorithm"];
-            const word = words[Math.floor(Math.random() * words.length)];
-            const scrambled = word.split("").sort(() => Math.random() - 0.5).join("");
-            response = `🔤 Word Scramble!\nUnscramble this word: ${scrambled}`;
-            return response;
-        }
+    //     // Word Scramble
+    //     else if (userMessage.includes("word scramble")) {
+    //         const words = ["javascript", "programming", "developer", "algorithm"];
+    //         const word = words[Math.floor(Math.random() * words.length)];
+    //         const scrambled = word.split("").sort(() => Math.random() - 0.5).join("");
+    //         response = `🔤 Word Scramble!\nUnscramble this word: ${scrambled}`;
+    //         return response;
+    //     }
 
-        // Math Quiz
-        else if (userMessage.includes("math quiz")) {
-            const num1 = Math.floor(Math.random() * 50) + 1;
-            const num2 = Math.floor(Math.random() * 50) + 1;
-            response = `➕ Math Quiz!\nWhat is ${num1} + ${num2}? Type your answer:`;
-            return response;
-        }
+    //     // Math Quiz
+    //     else if (userMessage.includes("math quiz")) {
+    //         const num1 = Math.floor(Math.random() * 50) + 1;
+    //         const num2 = Math.floor(Math.random() * 50) + 1;
+    //         response = `➕ Math Quiz!\nWhat is ${num1} + ${num2}? Type your answer:`;
+    //         return response;
+    //     }
 
-        // Memory Test
-        else if (userMessage.includes("memory test")) {
-            const numbers = Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join(" ");
-            response = `🧠 Memory Test!\nMemorize these numbers: ${numbers}\nType them back after 10 seconds!`;
-            return response;
-        }
+    //     // Memory Test
+    //     else if (userMessage.includes("memory test")) {
+    //         const numbers = Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join(" ");
+    //         response = `🧠 Memory Test!\nMemorize these numbers: ${numbers}\nType them back after 10 seconds!`;
+    //         return response;
+    //     }
 
-        // Fallback if no game is chosen
-        else {
-            response = `🎮 Choose a game from the following options:\n- ${gameOptions.join("\n- ")}\nType the name of the game to start!`;
-            return response;
-        }
-    }
+    //     // Fallback if no game is chosen
+    //     else {
+    //         response = `🎮 Choose a game from the following options:\n- ${gameOptions.join("\n- ")}\nType the name of the game to start!`;
+    //         return response;
+    //     }
+    // }
     
     // ============== Weather Functioning ====================
     else if (
@@ -324,7 +323,8 @@ export const generateBotResponse = async (message) => {
             appendMessage("assistant", response);
             speak(response);
         }
-    } else if (
+    }
+    else if (
         userMessage.includes("delete all reminders") ||
         userMessage.includes("clear all reminders")
     ) {
@@ -334,7 +334,8 @@ export const generateBotResponse = async (message) => {
         const response = "All reminders have been deleted.";
         appendMessage("assistant", response);
         speak(response);
-    } else if (
+    }
+    else if (
         userMessage.includes("delete reminder") ||
         userMessage.includes("remove reminder")
     ) {
