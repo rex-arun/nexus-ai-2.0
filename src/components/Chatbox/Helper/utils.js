@@ -29,6 +29,78 @@ export const generateBotResponse = (message) => {
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
+    // ========================== Small Game Feature ==========================
+    else if (userMessage.includes("play a game")) {
+    const userGameMessage = userMessage.toLowerCase();
+    const gameOptions = ["number guessing", "rock paper scissors", "tic tac toe", "trivia challenge", "word scramble", "math quiz", "memory test"];
+
+    // Number Guessing Game
+    if (userGameMessage.includes("number guessing")) {
+        const randomNumber = Math.floor(Math.random() * 100) + 1;
+        return `🎲 Let's play a Number Guessing Game!\nI've picked a number between 1 and 100. Try to guess it by typing a number.`;
+    } 
+
+    // Rock Paper Scissors
+    else if (userGameMessage.includes("rock paper scissors")) {
+        const choices = ["rock", "paper", "scissors"];
+        const botChoice = choices[Math.floor(Math.random() * choices.length)];
+        return `✊✋✌️ Let's play Rock-Paper-Scissors!\nType your choice (rock, paper, or scissors), and I'll reveal mine.`;
+    } 
+
+    // Tic Tac Toe
+    else if (userGameMessage.includes("tic tac toe")) {
+        return `🎮 Let's play Tic Tac Toe!\nUnfortunately, I can't display the board here, but type your moves like 'A1', 'B2', etc., and I'll play along!`;
+    } 
+
+    // Trivia Challenge
+    else if (userGameMessage.includes("trivia challenge")) {
+        const triviaQuestions = [
+            { question: "What is the capital of France?", answer: "paris" },
+            { question: "Who wrote 'Romeo and Juliet'?", answer: "shakespeare" },
+            { question: "What is 8 x 12?", answer: "96" },
+            { question: "Who painted the Mona Lisa?", answer: "da vinci" },
+            { question: "What is the largest planet in our solar system?", answer: "jupiter" },
+            { question: "What is the smallest country in the world?", answer: "vatican city" },
+            { question: "Which animal is known as the King of the Jungle?", answer: "lion" },
+            { question: "What is the largest ocean on Earth?", answer: "pacific" },
+            { question: "Who discovered gravity?", answer: "newton" },
+            { question: "What is the chemical symbol for gold?", answer: "au" },
+            { question: "In which year did the Titanic sink?", answer: "1912" },
+            { question: "What is the hardest natural substance on Earth?", answer: "diamond" },
+            { question: "Who was the first president of the United States?", answer: "george washington" },
+            { question: "What is the largest desert in the world?", answer: "sahara" },
+            { question: "What is the longest river in the world?", answer: "amazon" }
+        ];
+        const selectedTrivia = triviaQuestions[Math.floor(Math.random() * triviaQuestions.length)];
+        return `🧠 Trivia Time!\n${selectedTrivia.question}\nType your answer:`;
+    } 
+
+    // Word Scramble
+    else if (userGameMessage.includes("word scramble")) {
+        const words = ["javascript", "programming", "developer", "algorithm"];
+        const word = words[Math.floor(Math.random() * words.length)];
+        const scrambled = word.split("").sort(() => Math.random() - 0.5).join("");
+        return `🔤 Word Scramble!\nUnscramble this word: ${scrambled}`;
+    } 
+
+    // Math Quiz
+    else if (userGameMessage.includes("math quiz")) {
+        const num1 = Math.floor(Math.random() * 50) + 1;
+        const num2 = Math.floor(Math.random() * 50) + 1;
+        return `➕ Math Quiz!\nWhat is ${num1} + ${num2}? Type your answer:`;
+    } 
+
+    // Memory Test
+    else if (userGameMessage.includes("memory test")) {
+        const numbers = Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join(" ");
+        return `🧠 Memory Test!\nMemorize these numbers: ${numbers}\nType them back after 10 seconds!`;
+    } 
+
+    // Default Game Options
+    else {
+        return `🎮 Let's have some fun! Choose a game to play:\n- ${gameOptions.join("\n- ")}\nType the name of the game to start!`;
+    }
+}
 
     // ============== Weather Functioning (Arun) ====================
     else if (
