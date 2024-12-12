@@ -75,14 +75,16 @@ export default function Chatbox() {
     const sendMessage = async (inputValue) => {
         if (inputValue.trim() === "") return;
 
-        setMessages((prevMessages) => [
-            ...prevMessages,
-            { sender: "user", text: inputValue },
-        ]);
+        
 
         setChatStarted(true);
 
         if (inputValue.startsWith("image/prompt:")) {
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "user", text: inputValue },
+            ]);
+            
             const prompt = inputValue.replace("image/prompt:", "").trim();
 
             setInputValue("");
@@ -124,6 +126,7 @@ export default function Chatbox() {
                 console.error("Error generating image:", error);
             }
         } else {
+            // Call handleUserInput without adding the user message here
             handleUserInput(
                 { key: "Enter", target: { value: inputValue } },
                 messages,

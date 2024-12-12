@@ -1,50 +1,80 @@
-import { generateBotResponse } from "./utils";
+import { generateBotResponse } from './utils'; // Importing the generateBotResponse function
 
-// ============= Chat Output ===============
-export const handleUserInput = (
-    event,
-    messages,
-    setMessages,
-    setIsTyping,
-    setChatStarted,
-    isVoiceMode,
-    speak
-) => {
+export const handleUserInput = async (event, messages, setMessages, setIsTyping, setChatStarted, isVoiceMode, speak) => {
     if (event.key === "Enter" && event.target.value.trim() !== "") {
         const userMessage = event.target.value.trim();
 
-        const botResponse = generateBotResponse(userMessage); // Get bot's response
-
-        setMessages([
-            ...messages,
-            { text: userMessage, sender: "user" },
-            { text: botResponse, sender: "bot" },
+        // Add user message to the state
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: "user", text: userMessage },
         ]);
+
+        // Add a loading indicator for the bot's response
+        const loadingMessage = { sender: "bot", text: "...", isLoading: true };
+        setMessages((prevMessages) => [...prevMessages, loadingMessage]);
+
         event.target.value = "";
         setIsTyping(false);
         setChatStarted(true);
 
-        if (isVoiceMode) {
-            speak(botResponse);
+        try {
+            const botResponses = await generateBotResponse(userMessage); // Get bot's response
+
+            // Replace the loading message with actual bot responses
+            setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1), // Remove the loading message
+                ...botResponses.map((response) => ({ text: response, sender: "bot" })),
+            ]);
+
+            if (isVoiceMode) {
+                speak(botResponses.join(" ")); // Speak the concatenated bot responses
+            }
+        } catch (error) {
+            console.error("Error generating bot response:", error);
+            // Replace loading with an error message
+            setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1),
+                { sender: "bot", text: "Sorry, something went wrong." },
+            ]);
         }
     }
 };
 
-// ============= Voice Output ===============
-export const handleVoiceInput = (event, setMessages, speak, setChatStarted) => {
+export const handleVoiceInput = async (event, setMessages, speak, setChatStarted) => {
     const transcript =
         event.results[event.resultIndex][0].transcript.toLowerCase();
 
     if (event.results[event.resultIndex].isFinal) {
-        const botResponse = generateBotResponse(transcript); // Get bot's response
-        setChatStarted(true);
-
+        // Add user message to the state
         setMessages((prevMessages) => [
             ...prevMessages,
-            { text: transcript, sender: "user" },
-            { text: botResponse, sender: "bot" },
+            { sender: "user", text: transcript },
         ]);
 
-        speak(botResponse); // Ensure bot response is spoken as well
+        // Add a loading indicator for the bot's response
+        const loadingMessage = { sender: "bot", text: "...", isLoading: true };
+        setMessages((prevMessages) => [...prevMessages, loadingMessage]);
+
+        setChatStarted(true);
+
+        try {
+            const botResponses = await generateBotResponse(transcript); // Get bot's response
+
+            // Replace the loading message with actual bot responses
+            setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1), // Remove the loading message
+                ...botResponses.map((response) => ({ text: response, sender: "bot" })),
+            ]);
+
+            speak(botResponses.join(" ")); // Ensure bot response is spoken as well
+        } catch (error) {
+            console.error("Error generating bot response:", error);
+            // Replace loading with an error message
+            setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1),
+                { sender: "bot", text: "Sorry, something went wrong." },
+            ]);
+        }
     }
 };
