@@ -1,50 +1,47 @@
-import { generateBotResponse } from "./utils";
+import { generateBotResponse } from './utils'; // Importing the generateBotResponse function
 
-// ============= Chat Output ===============
-export const handleUserInput = (
-    event,
-    messages,
-    setMessages,
-    setIsTyping,
-    setChatStarted,
-    isVoiceMode,
-    speak
-) => {
+export const handleUserInput = async (event, messages, setMessages, setIsTyping, setChatStarted, isVoiceMode, speak) => {
     if (event.key === "Enter" && event.target.value.trim() !== "") {
         const userMessage = event.target.value.trim();
 
-        const botResponse = generateBotResponse(userMessage); // Get bot's response
 
-        setMessages([
-            ...messages,
-            { text: userMessage, sender: "user" },
-            { text: botResponse, sender: "bot" },
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: "user", text: userMessage },
         ]);
+        // Only add the user message to the messages state once
+        const botResponses = await generateBotResponse(userMessage); // Get bot's response
+
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            // { text: userMessage, sender: "user" }, // Add user message
+            ...botResponses.map(response => ({ text: response, sender: "bot" })), // Add bot responses
+        ]);
+
         event.target.value = "";
         setIsTyping(false);
         setChatStarted(true);
 
         if (isVoiceMode) {
-            speak(botResponse);
+            speak(botResponses.join(" ")); // Speak the concatenated bot responses
         }
     }
 };
 
-// ============= Voice Output ===============
-export const handleVoiceInput = (event, setMessages, speak, setChatStarted) => {
+export const handleVoiceInput = async (event, setMessages, speak, setChatStarted) => {
     const transcript =
         event.results[event.resultIndex][0].transcript.toLowerCase();
 
     if (event.results[event.resultIndex].isFinal) {
-        const botResponse = generateBotResponse(transcript); // Get bot's response
+        const botResponses = await generateBotResponse(transcript); // Get bot's response
         setChatStarted(true);
 
         setMessages((prevMessages) => [
             ...prevMessages,
             { text: transcript, sender: "user" },
-            { text: botResponse, sender: "bot" },
+            ...botResponses.map(response => ({ text: response, sender: "bot" })), // Map responses to messages
         ]);
 
-        speak(botResponse); // Ensure bot response is spoken as well
+        speak(botResponses.join(" ")); // Ensure bot response is spoken as well
     }
 };
