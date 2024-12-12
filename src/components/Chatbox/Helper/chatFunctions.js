@@ -1,4 +1,4 @@
-import { generateBotResponse } from './utils';  
+import { generateBotResponse } from "./utils";
 
 // ============= Chat Output ===============
 export const handleUserInput = (
@@ -13,7 +13,7 @@ export const handleUserInput = (
     if (event.key === "Enter" && event.target.value.trim() !== "") {
         const userMessage = event.target.value.trim();
 
-        const botResponse = generateBotResponse(userMessage);  // Get bot's response
+        const botResponse = generateBotResponse(userMessage); // Get bot's response
 
         setMessages([
             ...messages,
@@ -30,28 +30,21 @@ export const handleUserInput = (
     }
 };
 
-
-
 // ============= Voice Output ===============
-export const handleVoiceInput = (
-    event,
-    setMessages,
-    speak,
-    setChatStarted
-) => {
+export const handleVoiceInput = (event, setMessages, speak, setChatStarted) => {
     const transcript =
         event.results[event.resultIndex][0].transcript.toLowerCase();
 
     if (event.results[event.resultIndex].isFinal) {
-        const botResponse = generateBotResponse(transcript);  // Get bot's response
+        const botResponse = generateBotResponse(transcript); // Get bot's response
         setChatStarted(true);
-        
+
         setMessages((prevMessages) => [
             ...prevMessages,
             { text: transcript, sender: "user" },
             { text: botResponse, sender: "bot" },
         ]);
 
-        speak(botResponse);  // Ensure bot response is spoken as well
+        speak(botResponse); // Ensure bot response is spoken as well
     }
 };

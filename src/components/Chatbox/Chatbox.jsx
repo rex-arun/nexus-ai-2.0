@@ -20,7 +20,7 @@ export default function Chatbox() {
     useEffect(() => {
         if ("webkitSpeechRecognition" in window) {
             recognition.current = new window.webkitSpeechRecognition();
-            recognition.current.continuous = false; 
+            recognition.current.continuous = true;
             recognition.current.interimResults = true;
             recognition.current.lang = "en-US";
 
@@ -28,10 +28,12 @@ export default function Chatbox() {
             recognition.current.onend = () => setIsListening(false);
             recognition.current.onresult = (event) => {
                 handleVoiceInput(event, setMessages, speak, setChatStarted);
-                stopVoiceInput(); 
-            
+                // Remove the stopVoiceInput call to keep listening
+                // stopVoiceInput();
+
                 if (chatContainerRef.current) {
-                    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                    chatContainerRef.current.scrollTop =
+                        chatContainerRef.current.scrollHeight;
                 }
             };
         }
@@ -41,7 +43,7 @@ export default function Chatbox() {
     useEffect(() => {
         const handleSpacebarPress = (event) => {
             if (isVoiceMode && event.code === "Space") {
-                startVoiceInput(); 
+                startVoiceInput();
             }
         };
 
@@ -50,7 +52,7 @@ export default function Chatbox() {
         return () => {
             window.removeEventListener("keydown", handleSpacebarPress);
         };
-    }, [isVoiceMode]); 
+    }, [isVoiceMode]);
 
     // Handle input change
     const handleInputChange = (event) => {
@@ -61,17 +63,17 @@ export default function Chatbox() {
         }
     };
 
-    // Handle user input 
+    // Handle user input
     const handleUserInputWrapper = (event) => {
         if (event.key === "Enter") {
             const inputValue = event.target.value.trim();
-            sendMessage(inputValue); 
+            sendMessage(inputValue);
         }
     };
 
     // =========== Send Input to Voice / Text / Image functions =============
     const sendMessage = async (inputValue) => {
-        if (inputValue.trim() === "") return; 
+        if (inputValue.trim() === "") return;
 
         setMessages((prevMessages) => [
             ...prevMessages,
@@ -83,7 +85,7 @@ export default function Chatbox() {
         if (inputValue.startsWith("image/prompt:")) {
             const prompt = inputValue.replace("image/prompt:", "").trim();
 
-            setInputValue(""); 
+            setInputValue("");
 
             // Add a message with a loading animation
             const loadingMessage = {
@@ -98,7 +100,7 @@ export default function Chatbox() {
                 if (imageUrl) {
                     // Replace loading message with the generated image
                     setMessages((prevMessages) => [
-                        ...prevMessages.slice(0, -1), 
+                        ...prevMessages.slice(0, -1),
                         {
                             sender: "bot",
                             text: `Here's the image:`,
@@ -116,14 +118,14 @@ export default function Chatbox() {
                 }
             } catch (error) {
                 setMessages((prevMessages) => [
-                    ...prevMessages.slice(0, -1), 
+                    ...prevMessages.slice(0, -1),
                     { sender: "bot", text: "Error generating image." },
                 ]);
                 console.error("Error generating image:", error);
             }
         } else {
             handleUserInput(
-                { key: "Enter", target: { value: inputValue } }, 
+                { key: "Enter", target: { value: inputValue } },
                 messages,
                 setMessages,
                 setIsTyping,
@@ -133,7 +135,7 @@ export default function Chatbox() {
             );
         }
 
-        setInputValue(""); 
+        setInputValue("");
         setIsTyping(false);
     };
 
@@ -153,7 +155,7 @@ export default function Chatbox() {
         );
 
         if (response.ok) {
-            const result = await response.blob(); 
+            const result = await response.blob();
             const imageUrl = URL.createObjectURL(result);
             return imageUrl;
         } else {
@@ -166,7 +168,7 @@ export default function Chatbox() {
     const downloadImage = (url) => {
         const link = document.createElement("a");
         link.href = url;
-        link.download = "nexa-image.png"; 
+        link.download = "nexa-image.png";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -319,7 +321,7 @@ export default function Chatbox() {
                             <input
                                 type="text"
                                 placeholder="Start a conversation..."
-                                value={inputValue} 
+                                value={inputValue}
                                 onChange={(e) => {
                                     setInputValue(e.target.value);
                                     handleInputChange(e);

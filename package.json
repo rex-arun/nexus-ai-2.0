@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remixicon": "^4.5.0"
+    "remixicon": "^4.5.0",
+    "require": "^2.4.20"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
