@@ -11,7 +11,7 @@ export const handleUserInput = async (event, messages, setMessages, setIsTyping,
         ]);
 
         // Add a loading indicator for the bot's response
-        const loadingMessage = { sender: "bot", text: "...", isLoading: true };
+        const loadingMessage = { sender: "bot", text: "", isLoading: true, className: "loading-dots" };
         setMessages((prevMessages) => [...prevMessages, loadingMessage]);
 
         event.target.value = "";
@@ -41,11 +41,17 @@ export const handleUserInput = async (event, messages, setMessages, setIsTyping,
     }
 };
 
-export const handleVoiceInput = async (event, setMessages, speak, setChatStarted) => {
+export const handleVoiceInput = async (event, setMessages, speak, setChatStarted, lastBotResponse) => {
     const transcript =
-        event.results[event.resultIndex][0].transcript.toLowerCase();
+        event.results[event.resultIndex][0].transcript.toLowerCase().trim();
 
     if (event.results[event.resultIndex].isFinal) {
+        // Check if the user's input is included in the last bot response
+        if (lastBotResponse.current && lastBotResponse.current.toLowerCase().includes(transcript)) {
+            console.log("Ignoring repeated input.");
+            return; // Ignore the input if it is included in the last bot response
+        }
+
         // Add user message to the state
         setMessages((prevMessages) => [
             ...prevMessages,
@@ -53,7 +59,7 @@ export const handleVoiceInput = async (event, setMessages, speak, setChatStarted
         ]);
 
         // Add a loading indicator for the bot's response
-        const loadingMessage = { sender: "bot", text: "...", isLoading: true };
+        const loadingMessage = { sender: "bot", text: "", isLoading: true, className: "loading-dots" };
         setMessages((prevMessages) => [...prevMessages, loadingMessage]);
 
         setChatStarted(true);
@@ -61,13 +67,16 @@ export const handleVoiceInput = async (event, setMessages, speak, setChatStarted
         try {
             const botResponses = await generateBotResponse(transcript); // Get bot's response
 
+            // Store the last bot response
+            lastBotResponse.current = botResponses.join(" ");
+
             // Replace the loading message with actual bot responses
             setMessages((prevMessages) => [
                 ...prevMessages.slice(0, -1), // Remove the loading message
                 ...botResponses.map((response) => ({ text: response, sender: "bot" })),
             ]);
 
-            speak(botResponses.join(" ")); // Ensure bot response is spoken as well
+            speak(lastBotResponse.current); // Ensure bot response is spoken as well
         } catch (error) {
             console.error("Error generating bot response:", error);
             // Replace loading with an error message

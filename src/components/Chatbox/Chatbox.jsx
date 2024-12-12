@@ -15,6 +15,8 @@ export default function Chatbox() {
     const [inputValue, setInputValue] = useState("");
     const chatContainerRef = useRef(null);
     const recognition = useRef(null);
+    const lastBotResponse = useRef(""); // Store the last bot response
+    const [isMicOn, setIsMicOn] = useState(false);
 
     // ========= Initialize speech recognition API ==========
     useEffect(() => {
@@ -27,7 +29,13 @@ export default function Chatbox() {
             recognition.current.onstart = () => setIsListening(true);
             recognition.current.onend = () => setIsListening(false);
             recognition.current.onresult = (event) => {
-                handleVoiceInput(event, setMessages, speak, setChatStarted);
+                handleVoiceInput(
+                    event,
+                    setMessages,
+                    speak,
+                    setChatStarted,
+                    lastBotResponse
+                );
                 // Remove the stopVoiceInput call to keep listening
                 // stopVoiceInput();
 
@@ -75,8 +83,6 @@ export default function Chatbox() {
     const sendMessage = async (inputValue) => {
         if (inputValue.trim() === "") return;
 
-        
-
         setChatStarted(true);
 
         if (inputValue.startsWith("image/prompt:")) {
@@ -84,7 +90,7 @@ export default function Chatbox() {
                 ...prevMessages,
                 { sender: "user", text: inputValue },
             ]);
-            
+
             const prompt = inputValue.replace("image/prompt:", "").trim();
 
             setInputValue("");
@@ -177,17 +183,17 @@ export default function Chatbox() {
         document.body.removeChild(link);
     };
 
-    // Start voice input
     const startVoiceInput = () => {
         if (recognition.current) {
             recognition.current.start();
+            setIsMicOn(true); // Set mic state to on
         }
     };
 
-    // Stop voice input
     const stopVoiceInput = () => {
         if (recognition.current) {
             recognition.current.stop();
+            setIsMicOn(false); // Set mic state to off
         }
     };
 
@@ -227,7 +233,7 @@ export default function Chatbox() {
         <>
             {/* ======= Voice Mode UI ========== */}
             {isVoiceMode ? (
-                <div className="voice-mode">
+                <div className={`voice-mode ${isMicOn ? "active" : ""}`}>
                     <div className="voice-animation">
                         <div className="line"></div>
                         <div className="line"></div>
@@ -236,8 +242,23 @@ export default function Chatbox() {
                     <div className="close-button" onClick={closeVoiceMode}>
                         <i className="ri-close-line"></i>{" "}
                     </div>
-                    <button className="mic-button" onClick={startVoiceInput}>
-                        <i className="ri-mic-line"></i>{" "}
+                    <button
+                        className={`mic-button ${
+                            isMicOn ? "button-active" : "button-deactive"
+                        }`}
+                        onClick={() => {
+                            if (isMicOn) {
+                                stopVoiceInput();
+                            } else {
+                                startVoiceInput();
+                            }
+                        }}
+                    >
+                        <i
+                            className={`ri-mic-${
+                                isMicOn ? "fill" : "off-fill"
+                            }`}
+                        ></i>
                     </button>
                 </div>
             ) : (
@@ -294,9 +315,19 @@ export default function Chatbox() {
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`message ${message.sender}`}
+                                className={`message ${message.sender} ${
+                                    message.className || ""
+                                }`}
                             >
-                                <p>{message.text}</p>
+                                {message.isLoading ? (
+                                    <div className="loading-dots">
+                                        <span className="dot"></span>
+                                        <span className="dot"></span>
+                                        <span className="dot"></span>
+                                    </div>
+                                ) : (
+                                    <p>{message.text}</p>
+                                )}
                                 {message.imageUrl && (
                                     <div className="image-box">
                                         <img
@@ -374,7 +405,7 @@ export default function Chatbox() {
                         <div className="acknowledge">
                             <p>
                                 NexusAI can make mistakes, double-check
-                                important stuff 
+                                important stuff
                             </p>
                         </div>
                     </div>
