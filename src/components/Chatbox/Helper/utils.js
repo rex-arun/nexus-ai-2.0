@@ -1,3 +1,6 @@
+import {GoogleGenerativeAI} from "@google/generative-ai";
+
+
 export const generateBotResponse = (message) => {
     const userMessage = message.toLowerCase();
 
@@ -96,9 +99,55 @@ export const generateBotResponse = (message) => {
         return responses;
     }
 
+    // ==================== Joke part =======================
+    
+    else if (
+        userMessage.includes("joke")
+    ) {
+        
+        let responses = [];
+        // Trying to fetch API
+        fetch(`https://icanhazdadjoke.com/slack`)
+        .then((responce) => responce.json()).then((data) => {
+            
+            // If responce is valid
+                responses.push(`${data.attachments[0].text}`);
+            }).catch((error) => {
+            responses.push(`Something went wrong. Please try again later.`);
+        });
 
-    else {
-        return "I didn't understand that.";
+        console.log(responses);
+        return responses;
+        
+        }
+
+
+    // =================== Else part =======================
+    else
+    {
+        // ======= Gemini Model =============
+
+        let responses = [];
+        let resultText;
+
+
+    async function tasks() {
+
+        console.log(userMessage);
+        const genAI = new GoogleGenerativeAI("AIzaSyBFbh1m-8HNU0nW3s-wH2g34QEzwxXYgdI");
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  
+        const prompt = userMessage;
+        const result = await model.generateContent(`Your Promt is: ${prompt} || Remember this thing: 1. We are using your API, so for our service try to generate output under 20 words if possible and you can increase if nessesary. 2. If someone wants to know about your name, owner, Creator or related then, Your name: Nexus Ai, Owner/Creator: Group A(BCA final year students from Kingston School of Management & Science)', 3. You are a chat bot not an API, also do text formating, dont add * and other symbols without meaning. 4. Dont include your persoanl information I provided to you if user didn't ask about it`);
+        resultText = result.response.text();
+        console.log(resultText);
+        responses.push(`${resultText}`)
+        
     }
-};
 
+    tasks();
+    return responses;
+
+  }
+
+}
