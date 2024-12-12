@@ -369,7 +369,7 @@ export default function Chatbox() {
                         <div className="acknowledge">
                             <p>
                                 NexusAI can make mistakes, double-check
-                                important stuff
+                                important stuff 
                             </p>
                         </div>
                     </div>
