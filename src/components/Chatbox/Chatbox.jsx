@@ -15,7 +15,7 @@ export default function Chatbox() {
     const [inputValue, setInputValue] = useState("");
     const chatContainerRef = useRef(null);
     const recognition = useRef(null);
-    const lastBotResponse = useRef(""); // Store the last bot response
+    const lastBotResponse = useRef("");
     const [isMicOn, setIsMicOn] = useState(false);
 
     // ========= Initialize speech recognition API ==========
@@ -95,7 +95,6 @@ export default function Chatbox() {
 
             setInputValue("");
 
-            // Add a message with a loading animation
             const loadingMessage = {
                 sender: "bot",
                 text: "Generating image...",
@@ -103,10 +102,8 @@ export default function Chatbox() {
             setMessages((prevMessages) => [...prevMessages, loadingMessage]);
 
             try {
-                // API call to generate image
                 const imageUrl = await generateImage(prompt);
                 if (imageUrl) {
-                    // Replace loading message with the generated image
                     setMessages((prevMessages) => [
                         ...prevMessages.slice(0, -1),
                         {
@@ -132,7 +129,6 @@ export default function Chatbox() {
                 console.error("Error generating image:", error);
             }
         } else {
-            // Call handleUserInput without adding the user message here
             handleUserInput(
                 { key: "Enter", target: { value: inputValue } },
                 messages,
@@ -183,23 +179,34 @@ export default function Chatbox() {
         document.body.removeChild(link);
     };
 
+    // Toggle voice mode
     const startVoiceInput = () => {
         if (recognition.current) {
             recognition.current.start();
-            setIsMicOn(true); // Set mic state to on
+            setIsMicOn(true);
         }
     };
 
+    // Stop voice input
     const stopVoiceInput = () => {
         if (recognition.current) {
             recognition.current.stop();
-            setIsMicOn(false); // Set mic state to off
+            setIsMicOn(false);
         }
     };
 
     // Speak the response
     const speak = (response) => {
         if ("speechSynthesis" in window) {
+            // Check if the response contains "stop" or "shut up"
+            if (
+                response.toLowerCase().includes("stop") ||
+                response.toLowerCase().includes("shut up")
+            ) {
+                window.speechSynthesis.cancel(); // Stop any ongoing speech
+                return; // Exit the function
+            }
+
             const utterance = new SpeechSynthesisUtterance(response);
             utterance.rate = 1;
             utterance.pitch = 1;
@@ -224,9 +231,11 @@ export default function Chatbox() {
     };
 
     // Close voice mode
+    // Close voice mode
     const closeVoiceMode = () => {
         setIsVoiceMode(false);
         stopVoiceInput();
+        window.speechSynthesis.cancel(); // Stop any ongoing speech
     };
 
     return (
@@ -394,7 +403,7 @@ export default function Chatbox() {
                                             onClick={() => {
                                                 const inputValue =
                                                     inputRef.current.value.trim();
-                                                sendMessage(inputValue); // Call sendMessage with the input value
+                                                sendMessage(inputValue);
                                             }}
                                         ></i>
                                     </div>

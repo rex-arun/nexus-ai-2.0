@@ -21,8 +21,8 @@ export const generateBotResponse = async (message) => {
     } else if (userMessage.includes("how are you")) {
         const responses = [
             "I'm doing great, thanks for asking! How about you?",
-            "I'm just a bunch of code, but I’m feeling awesome! How are you?",
-            "I'm functioning at full capacity, ready to assist you! How are you?",
+            "I'm just a bunch of code, but I’m feeling awesome!",
+            "I'm functioning at full capacity, ready to assist you!",
         ];
         return [responses[Math.floor(Math.random() * responses.length)]];
     } else if (
@@ -136,11 +136,8 @@ export const generateBotResponse = async (message) => {
     else if (
         userMessage.includes("weather") ||
         userMessage.includes("temperature") ||
-        userMessage.includes("rain") ||
         userMessage.includes("climate") ||
-        userMessage.includes("forecast") ||
-        userMessage.includes("radar") ||
-        userMessage.includes("cloud")
+        userMessage.includes("forecast") 
     ) {
         const apiKey = "9cae3805331d347f02493199ce5e540f";
 
@@ -190,9 +187,8 @@ export const generateBotResponse = async (message) => {
     }
 
     // ==================== Joke part =======================
-    else if (userMessage.includes("joke")) {
+    else if (userMessage.includes("joke") || userMessage.includes("funny")) {
         let responses = [];
-        // Trying to fetch API
         try {
             const response = await fetch(`https://icanhazdadjoke.com/slack`);
             const data = await response.json();
@@ -204,6 +200,7 @@ export const generateBotResponse = async (message) => {
 
         return responses;
     }
+        
     // ============== Time Function ====================
     else if (userMessage.includes("time")) {
         let time = new Date().toLocaleString(undefined, {
@@ -230,7 +227,6 @@ export const generateBotResponse = async (message) => {
     else if (
         userMessage.match(/(what is|calculate)?\s*\d+(\s*[\+\-\*\/\sx]\s*\d+)+/)
     ) {
-        // Clean the command by removing unnecessary words like "what is" or "calculate"
         let cleanCommand = userMessage
             .replace(/(what is|calculate)/, "")
             .trim();
@@ -238,15 +234,11 @@ export const generateBotResponse = async (message) => {
         // Replace 'x' with '*' for multiplication
         cleanCommand = cleanCommand.replace(/\s*x\s*/, "*"); // Handle spaces around 'x'
 
-        // Now handle multiple operations
-        // Replace spaces around operators and split by operator
-        let operands = cleanCommand.split(/\s*[\+\-\*\/]\s*/); // Get numbers
-        let operators = cleanCommand.match(/[\+\-\*\/]/g); // Get operators (+, -, *, /)
+        let operands = cleanCommand.split(/\s*[\+\-\*\/]\s*/); 
+        let operators = cleanCommand.match(/[\+\-\*\/]/g); 
 
-        // Initialize result with the first number
         let result = parseFloat(operands[0]);
 
-        // Apply operations one by one
         for (let i = 1; i < operands.length; i++) {
             let num = parseFloat(operands[i]);
             if (isNaN(num)) {
@@ -284,7 +276,6 @@ export const generateBotResponse = async (message) => {
         (userMessage.includes("set") && userMessage.includes("set reminder")) ||
         (userMessage.includes("create") && userMessage.includes("reminder"))
     ) {
-        // Extract reminder text after the keyword
         const reminderText = userMessage.match(/reminder\s(.+)/i)?.[1]?.trim();
 
         if (reminderText) {
@@ -302,7 +293,8 @@ export const generateBotResponse = async (message) => {
             appendMessage("assistant", response);
             speak(response);
         }
-    } else if (
+    }
+    else if (
         (userMessage.includes("show") && userMessage.includes("reminders")) ||
         (userMessage.includes("tell") &&
             userMessage.includes("my reminders")) ||
@@ -377,10 +369,10 @@ export const generateBotResponse = async (message) => {
 
     // =============== General Query ==================
     else if (
-        userMessage.startsWith("who") ||
-        userMessage.startsWith("what") ||
+        userMessage.startsWith("who is") ||
+        userMessage.startsWith("who was") ||
+        userMessage.startsWith("what is") ||
         userMessage.startsWith("tell me about") ||
-        userMessage.startsWith("define") ||
         userMessage.startsWith("explain") ||
         userMessage.startsWith("give me a brief") ||
         userMessage.startsWith("show me")
@@ -414,7 +406,7 @@ export const generateBotResponse = async (message) => {
         }
     }
 
-    // =================== Else part =======================
+    // =================== Else part (Gemini) =======================
     else {
         // ======= Gemini Model =============
 
