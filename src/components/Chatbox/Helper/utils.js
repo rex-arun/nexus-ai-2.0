@@ -47,11 +47,11 @@ export const generateBotResponse = (message) => {
 
         // Getting city name
         let location;
-        if(userMessage.includes("in")){
-            location = userMessage.split(" in ")[1]?.trim()
+        if(userMessage.includes("of")){
+            location = userMessage.split(" of ")[1]?.trim()
         }
-        else if(userMessage.includes("of")){
-            location = userMessage.split(" of ")[1]?.trim();
+        else if(userMessage.includes("in")){
+            location = userMessage.split(" in ")[1]?.trim();
         }
 
         // Responces 
@@ -91,6 +91,8 @@ export const generateBotResponse = (message) => {
         }
 
         // Returning responces
+        console.log(responses);
+        
         return responses;
     }
 
