@@ -243,11 +243,8 @@ export default function Chatbox() {
             {/* ======= Voice Mode UI ========== */}
             {isVoiceMode ? (
                 <div className={`voice-mode ${isMicOn ? "active" : ""}`}>
-                    <div className="voice-animation">
-                        <div className="line"></div>
-                        <div className="line"></div>
-                        <div className="line"></div>
-                    </div>
+                     <p>Nexus is Listening..</p>
+                    <div className="voice-animation"></div>
                     <div className="close-button" onClick={closeVoiceMode}>
                         <i className="ri-close-line"></i>{" "}
                     </div>
@@ -350,7 +347,7 @@ export default function Chatbox() {
                                             }
                                             className="download-button"
                                         >
-                                            <i className="ri-download-fill"></i>
+                                            <i class="ri-file-download-fill"></i>
                                         </button>
                                     </div>
                                 )}

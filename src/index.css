@@ -9,14 +9,16 @@
 }
 
 :root{
-    --purple:#560bad;
+    --purple:#9557ec;
     --light-blue:#4361ee;
     --blue:#3a0ca3;
     --dark-sky:#4895ef;
+    --grey: #433f4b;
+    --dark-theme:#1f1521;
 }
 
 body{
-    background-color: #242424;
+    background-color:var(--dark-theme);
 }
 
 .logo{
