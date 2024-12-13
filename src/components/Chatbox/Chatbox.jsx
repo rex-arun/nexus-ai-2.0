@@ -243,7 +243,12 @@ export default function Chatbox() {
             {/* ======= Voice Mode UI ========== */}
             {isVoiceMode ? (
                 <div className={`voice-mode ${isMicOn ? "active" : ""}`}>
-                     <p>Nexus is Listening..</p>
+                    {isMicOn ? (
+                        <p>Nexa is Listening..</p>
+                    ) : (
+                        <p>Nexa Stopped Listening..</p>
+                    )}
+
                     <div className="voice-animation"></div>
                     <div className="close-button" onClick={closeVoiceMode}>
                         <i className="ri-close-line"></i>{" "}

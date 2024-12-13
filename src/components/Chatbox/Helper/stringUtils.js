@@ -1,4 +1,3 @@
-// stringUtils.js
 // import levenshtein from 'fast-levenshtein';
 
 // export const getNormalizedString = (str) => {
@@ -16,10 +15,6 @@
 
 
 // ==== manual ==== 
-// stringUtils.js
-
-// stringUtils.js
-
 export const getNormalizedString = (str) => {
     return str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").toLowerCase().trim();
 };
