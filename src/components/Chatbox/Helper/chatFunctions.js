@@ -44,10 +44,12 @@ export const handleVoiceInput = async (event, setMessages, speak, setChatStarted
 
     if (event.results[event.resultIndex].isFinal) {
         const normalizedTranscript = getNormalizedString(transcript);
+        console.log("Input:", normalizedTranscript);
+        
         const lastResponseNormalized = lastBotResponse.current ? getNormalizedString(lastBotResponse.current) : "";
 
         // Check similarity using Jaccard similarity
-        if (lastResponseNormalized && getSimilarity(normalizedTranscript, lastResponseNormalized) > 0.5) { // Adjusted threshold
+        if (lastResponseNormalized && getSimilarity(normalizedTranscript, lastResponseNormalized) > 0.5) {
             console.log("Ignoring repeated input.");
             return; 
         }
@@ -57,28 +59,26 @@ export const handleVoiceInput = async (event, setMessages, speak, setChatStarted
             { sender: "user", text: transcript },
         ]);
 
-        // Add a loading indicator for the bot's response
         const loadingMessage = { sender: "bot", text: "", isLoading: true, className: "loading-dots" };
         setMessages((prevMessages) => [...prevMessages, loadingMessage]);
 
         setChatStarted(true);
 
         try {
-            const botResponses = await generateBotResponse(transcript); // Get bot's response
+            const botResponses = await generateBotResponse(transcript); 
 
             // Store the last bot response
             lastBotResponse.current = botResponses.join(" ");
 
-            // Replace the loading message with actual bot responses
             setMessages((prevMessages) => [
-                ...prevMessages.slice(0, -1), // Remove the loading message
+                ...prevMessages.slice(0, -1), 
                 ...botResponses.map((response) => ({ text: response, sender: "bot" })),
             ]);
 
-            speak(lastBotResponse.current); // Ensure bot response is spoken as well
+            speak(lastBotResponse.current);
+            
         } catch (error) {
             console.error("Error generating bot response:", error);
-            // Replace loading with an error message
             setMessages((prevMessages) => [
                 ...prevMessages.slice(0, -1),
                 { sender: "bot", text: "Sorry, something went wrong." },

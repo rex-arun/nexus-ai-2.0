@@ -18,24 +18,59 @@ export const generateBotResponse = async (message) => {
         userMessage == "hi"
     ) {
         return ["Hello! How can I help you"];
-    } else if (userMessage.includes("how are you")) {
+    }
+    else if (userMessage.includes("how are you")) {
         const responses = [
             "I'm doing great, thanks for asking! How about you?",
             "I'm just a bunch of code, but I’m feeling awesome!",
             "I'm functioning at full capacity, ready to assist you!",
         ];
         return [responses[Math.floor(Math.random() * responses.length)]];
-    } else if (
-        userMessage.includes("what's up") ||
-        userMessage.includes("what is up")
-    ) {
+    }
+
+    // Are you human?
+    else if (userMessage.includes("are you human") || userMessage.includes("are you a human")) {
         const responses = [
-            "Not much, just here to help you out! What's up with you?",
-            "Just hanging out in the cloud, you know. What's going on?",
-            "I'm always up, ready to assist. How can I help today?",
+            "I wish I could be, but nope, I’m just a bunch of code!",
+            "Nope, I'm an AI assistant here to help you out!",
+            "I’m not human, but I can chat like one! Does that count?",
         ];
         return [responses[Math.floor(Math.random() * responses.length)]];
     }
+    
+    else if (userMessage.includes("you are awesome") || userMessage.includes("you are great")) {
+        const responses = [
+            "You're pretty awesome yourself! Thanks for being so cool.",
+            "Thank you! You're amazing too!",
+            "You're the best! I'm just here to help out."
+        ];
+        return [responses[Math.floor(Math.random() * responses.length)]];
+    }
+        
+    else if (userMessage.includes("your name") || userMessage.includes("what is your name")) {
+        const responses = [
+            "I’m Nexa, your friendly assistant! How can I help you today?",
+            "My name is Nexa, but I’m happy to go by anything you like!",
+            "I’m Nexa, your chatbot assistant. Nice to meet you!"
+        ];
+        return [responses[Math.floor(Math.random() * responses.length)]];
+    }
+        
+    else if (userMessage.includes("can you do")|| userMessage.includes("you can do")) {
+        const responses = [
+            "I can help with answering questions, chatting, and providing information!",
+            "I’m here to assist with whatever you need—just ask away!",
+            "I can help with a variety of tasks, from answering questions to providing information and more!"
+        ];
+        return [responses[Math.floor(Math.random() * responses.length)]];
+    }
+        
+    else if (
+        userMessage.includes("who are you") ||
+        userMessage.includes("what are you")
+    ) {
+        return ["I am a chat assistant with Artificial Intelligence"];
+    } 
 
     // ========================== Small Game Feature ==========================
     // else if (userMessage.includes("play a game")) {
@@ -131,13 +166,13 @@ export const generateBotResponse = async (message) => {
     //         return response;
     //     }
     // }
-    
+
     // ============== Weather Functioning ====================
     else if (
         userMessage.includes("weather") ||
         userMessage.includes("temperature") ||
         userMessage.includes("climate") ||
-        userMessage.includes("forecast") 
+        userMessage.includes("forecast")
     ) {
         const apiKey = "9cae3805331d347f02493199ce5e540f";
 
@@ -186,6 +221,65 @@ export const generateBotResponse = async (message) => {
         return responses; // Ensure to return the responses after the fetch call
     }
 
+    // ===================== News =====================
+
+    // ===================== News =====================
+    else if (
+        userMessage.includes("news") ||
+        userMessage.includes("headlines") ||
+        userMessage.includes("announcements")
+    ) {
+        let topic;
+
+        if (userMessage.includes("about")) {
+            topic = userMessage.split(" about ")[1]?.trim();
+        } else if (userMessage.includes("on")) {
+            topic = userMessage.split(" on ")[1]?.trim();
+        } else if (userMessage.includes("of")) {
+            topic = userMessage.split(" of ")[1]?.trim();
+        } else if (userMessage.includes("for")) {
+            topic = userMessage.split(" for ")[1]?.trim();
+        }
+
+        const apiKey = "24eed314516a4d21a01f8eb51a26c3b1";
+        let responses = [];
+        let output = [];
+
+        async function fetchNews(query = "latest") {
+            const url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${apiKey}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.status === "ok" && data.articles.length > 0) {
+                    data.articles.forEach((article) => {
+                        if (article.description) {
+                            if (article.description != "[Removed]") {
+                                output.push(article.description);
+                            }
+                        }
+                    });
+
+                    if (output.length > 0) {
+                        let news =
+                            output[Math.floor(Math.random() * output.length)];
+                        responses.push(news);
+                    } else {
+                        responses.push("No news found for your query.");
+                    }
+                } else {
+                    responses.push("No news found for your query.");
+                }
+            } catch (error) {
+                responses.push("Something went wrong, Please try again later");
+            }
+        }
+
+        await fetchNews(topic || "latest");
+
+        return responses;
+    }
+
     // ==================== Joke part =======================
     else if (userMessage.includes("joke") || userMessage.includes("funny")) {
         let responses = [];
@@ -200,7 +294,7 @@ export const generateBotResponse = async (message) => {
 
         return responses;
     }
-        
+
     // ============== Time Function ====================
     else if (userMessage.includes("time")) {
         let time = new Date().toLocaleString(undefined, {
@@ -234,8 +328,8 @@ export const generateBotResponse = async (message) => {
         // Replace 'x' with '*' for multiplication
         cleanCommand = cleanCommand.replace(/\s*x\s*/, "*"); // Handle spaces around 'x'
 
-        let operands = cleanCommand.split(/\s*[\+\-\*\/]\s*/); 
-        let operators = cleanCommand.match(/[\+\-\*\/]/g); 
+        let operands = cleanCommand.split(/\s*[\+\-\*\/]\s*/);
+        let operators = cleanCommand.match(/[\+\-\*\/]/g);
 
         let result = parseFloat(operands[0]);
 
@@ -293,8 +387,7 @@ export const generateBotResponse = async (message) => {
             appendMessage("assistant", response);
             speak(response);
         }
-    }
-    else if (
+    } else if (
         (userMessage.includes("show") && userMessage.includes("reminders")) ||
         (userMessage.includes("tell") &&
             userMessage.includes("my reminders")) ||
@@ -315,8 +408,7 @@ export const generateBotResponse = async (message) => {
             appendMessage("assistant", response);
             speak(response);
         }
-    }
-    else if (
+    } else if (
         userMessage.includes("delete all reminders") ||
         userMessage.includes("clear all reminders")
     ) {
@@ -326,8 +418,7 @@ export const generateBotResponse = async (message) => {
         const response = "All reminders have been deleted.";
         appendMessage("assistant", response);
         speak(response);
-    }
-    else if (
+    } else if (
         userMessage.includes("delete reminder") ||
         userMessage.includes("remove reminder")
     ) {
@@ -335,7 +426,7 @@ export const generateBotResponse = async (message) => {
         let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
 
         if (reminders.length > 0) {
-            // Extract the number from the command
+            // Extract the number from the userMessage
             const match = userMessage.match(/\d+/);
             if (match) {
                 const index = parseInt(match[0], 10) - 1; // Convert to zero-based index
