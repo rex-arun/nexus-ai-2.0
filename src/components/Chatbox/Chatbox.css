@@ -4,29 +4,49 @@ body {
    justify-content: center;
    align-items: center;
    flex-direction: column;
+   width: 100%;
    height: 100vh;
    margin: 0;
    padding: 0;
-   overflow: hidden; /* Prevents scrolling */
+   overflow-x: hidden;
 }
 
 .header-section {
    padding: 30px;
+<<<<<<< Updated upstream
    width: 60rem;
    height: 70vh;
    display: flex;
    flex-direction: column;
    justify-content: center;
+=======
+   width: 100%;
+   height: auto;
+   position: relative;
+   top: 40%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   display: flex;
+>>>>>>> Stashed changes
    align-items: center;
-   box-sizing: border-box; /* Prevents padding from affecting the height */
+   justify-content: center;
+   flex-direction: column;
 }
+.header-section .ri-arrow-left-line{
+   font-size: 24px;
+   color: white;
+   position: absolute;
+   top: 0px;
+   left: 30px;
 
+}
 /* Heading styling */
-h1 {
-   text-align: left;
-   width: 70%;
-   font-size: 2.5rem;
-   font-family: 'Parkinsans', sans-serif;
+.title{
+   text-align: center;
+   width: 50%;
+   padding: 10px;
+   font-size: 3rem;
+   font-weight: 500;
    background: linear-gradient(319deg, rgba(118, 111, 247, 1) 0%, rgba(211, 15, 159, 1) 47%, rgba(226, 255, 132, 1) 100%);
    background-clip: text;
    -webkit-background-clip: text;
@@ -36,10 +56,10 @@ h1 {
 
 /* Prompt box styling */
 .promt {
+   width: 50%;
    display: flex;
-   justify-content: center;
+   justify-content: space-between;
    align-items: center;
-   gap: 20px;
    margin-top: 30px;
 }
 
@@ -82,9 +102,12 @@ h1 {
 
 /* Container for the input and icons */
 .input-container {
+   /* bottom: 40px; */
+   height: auto;
+   padding: 20px;
    position: relative;
-   width: 100%;
-   max-width: 650px; 
+   width: 90%;
+   max-width: 70%; 
    display: flex;
    align-items: center;
 }
@@ -122,9 +145,9 @@ input::placeholder {
 /* Icons container */
 .icons {
    position: absolute;
-   right: 15px; /* Align icons on the right inside the input */
+   right: 50px; /* Align icons on the right inside the input */
    display: flex;
-   gap: 10px; /* Space between icons */
+   gap: 20px; /* Space between icons */
    align-items: center;
 }
 
@@ -162,4 +185,45 @@ input::placeholder {
    color: #fff;
    font-style: italic;
    letter-spacing: 1.5px;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px){
+   .header-section{
+      flex-wrap: wrap;
+   }
+   .promt{
+      width: 50%;
+      gap: 20px;
+   }
+   .promt1 p, .promt2 p, .promt3 p{
+      width: 100px;
+      font-size: 13px
+   }
+}
+
+@media screen and (max-width: 768px){
+   .header-section{
+      top: 40%;
+      left: 50%;
+      flex-wrap: wrap;
+   }
+   .title{
+      font-size: 2rem;
+      width: 300px;
+   }
+   .promt{
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      gap: 10px;
+   }
+
+   .promt1, .promt2, .promt3{
+      width: 150px;
+   }
+
+   .promt1 p, .promt2 p, .promt3 p{
+      width: 170px;
+      font-size: 13px
+   }
 }

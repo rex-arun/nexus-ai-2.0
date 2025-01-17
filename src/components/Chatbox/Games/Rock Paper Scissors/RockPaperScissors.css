@@ -1,0 +1,236 @@
+.rock-paper-scissors {
+    text-align: center;
+    padding: 30px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #bac04c, #41007d); 
+    width: 400px;
+    animation: fadeIn 1s ease-in-out;
+    margin-top: 10px;
+}
+
+/* Heading */
+.rock-title {
+    font-size: 25px;
+    letter-spacing: 3px;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+
+.label {
+    font-size: 1rem;
+    font-weight: bold;
+   color: var(--grey);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.player-label {
+    position: absolute;
+    top: 0; 
+    left: 15%;
+    transform: translateX(-50%);
+}
+
+.computer-label {
+    position: absolute;
+    top: 0; 
+    right: 15%;
+    transform: translateX(50%);
+}
+
+.player-hand {
+    transform: rotateY(180deg);
+}
+
+.computer-hand {
+    transform: rotateY(0deg);
+}
+
+
+/* Hands Section */
+.hands {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 140px;
+}
+
+.hand {
+    width: 80px;
+    height: 80px;
+    animation: shake 1.5s ease-in-out infinite;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff; 
+    box-shadow: 0 4px 10px rgba(25, 25, 25, 0.648);
+}
+
+.hand img {
+    padding: 20px;
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+
+.player-hand {
+    transform: rotateY(180deg);
+}
+
+.computer-hand {
+    transform: rotateY(0deg);
+}
+
+.hand.shake img {
+    animation: shake 1.5s ease-in-out infinite;
+}
+
+.hand.result img {
+    animation: none;
+}
+
+/* Choice Buttons */
+.choices {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.choices button {
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--dark-sky);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(160, 160, 160, 0.45);
+}
+
+.choices button:hover {
+    background: linear-gradient(135deg, #ff6ec7, #ff4787);  /* Reversed gradient on hover */
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.8), 0 0 15px rgba(255, 105, 180, 0.6);
+}
+
+/* Result Section */
+.result {
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    background: white;
+    color: black;
+    animation: fadeInUp 0.5s ease-in-out;
+}
+
+.result p {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: black;
+    font-weight: bold;
+}
+
+.result h2 {
+    font-size: 1.5rem;
+    color: var(--purple);
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Play Again Button */
+.reset-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 50px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    box-shadow: 0 4px 15px rgba(58, 123, 213, 0.4), 0 0 10px rgba(58, 123, 213, 0.5);
+    transition: all 0.3s ease-in-out;
+}
+
+.reset-button:hover {
+    background: linear-gradient(135deg, #ff4787, #2a5298);  /* Pink and Blue gradient */
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.8), 0 0 15px rgba(255, 105, 180, 0.6);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .rock-paper-scissors {
+        width: 300px;
+    }
+    .rock-title{
+        font-size: 1rem;
+    }
+
+    .choices{
+        gap: 5px;
+    }
+    .choices button{
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+}
+
+@media screen and (max-width: 768px) {
+    .rock-paper-scissors {
+        width: 240px;
+    }
+    .rock-title{
+        font-size: 1rem;
+    }
+
+    .choices{
+        gap: 5px;
+    }
+    .choices button{
+        padding: 8px;
+        font-size: 12px;
+    }
+
+}

@@ -1,0 +1,96 @@
+<<<<<<< Updated upstream
+=======
+.App{
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+.settings-icon {
+    position: absolute;
+    top: 20px; 
+    right: 50px; 
+    cursor: pointer;
+    font-size: 24px; 
+    color: #333; 
+    transition: all 0.5s ease-in-out;
+    /* background-color: rebeccapurple; */
+}
+
+.settings-icon:hover {
+    color: #007bff; 
+    transform: rotate(180deg);
+}
+
+.additional-icons {
+    position: absolute;
+    padding:  30px 10px;
+    top: 20px;
+    right: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.1); 
+    border-radius: 20px;
+    backdrop-filter: blur(10px); 
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); 
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+}
+
+.additional-icons i {
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.3s, color 0.3s; 
+}
+
+.additional-icons i:hover {
+    color: var(--dark-sky); 
+    transform: scale(1.1); 
+}
+
+
+/* Toast notification (add it to the index.css) */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.toast-notification p {
+    margin: 0;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 5px;
+    background-color: #4caf50;
+    margin-top: 5px;
+    border-radius: 2px;
+    transition: width 0.1s linear;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+>>>>>>> Stashed changes
