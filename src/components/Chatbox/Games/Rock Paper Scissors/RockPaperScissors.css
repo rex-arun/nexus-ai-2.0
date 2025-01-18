@@ -2,7 +2,10 @@
     text-align: center;
     padding: 30px;
     border-radius: 20px;
-    background: linear-gradient(145deg, #bac04c, #41007d); 
+    background: linear-gradient(0deg, rgb(117, 29, 185) 0%, 
+    rgba(121, 34, 174, 0.258) 27%,
+    rgba(98,78,184,0.033911098619135105) 65%,
+    rgba(38,190,230,0) 100%); 
     width: 400px;
     animation: fadeIn 1s ease-in-out;
     margin-top: 10px;

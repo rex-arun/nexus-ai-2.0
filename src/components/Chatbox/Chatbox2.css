@@ -11,11 +11,7 @@
     top: 50px;
     left: 50%;
     transform: translateX(-50%);
-<<<<<<< Updated upstream
-=======
     /* z-index: 5;  */ 
-    
->>>>>>> Stashed changes
 }
 .chat-section::-webkit-scrollbar {
     display: none;
@@ -152,7 +148,10 @@
     bottom: 0;
     padding-top: 20px;
     gap: 80px;
-    background: linear-gradient(0deg, rgb(117, 29, 185) 0%, rgba(121, 34, 174, 0.258) 27%, rgba(98,78,184,0.033911098619135105) 65%, rgba(38,190,230,0) 100%);
+    background: linear-gradient(0deg, rgb(117, 29, 185) 0%, 
+    rgba(121, 34, 174, 0.258) 27%,
+    rgba(98,78,184,0.033911098619135105) 65%,
+    rgba(38,190,230,0) 100%);
 }
 
 .voice-mode p {
@@ -358,10 +357,7 @@
         opacity: 0.2;
     }
 }
-<<<<<<< Updated upstream
-=======
 
-/* ===== New Features - V2 ===== */
 /* Code block */
 .code-block-container{
     width: 37rem;
@@ -543,4 +539,4 @@
 
     }
 }
->>>>>>> Stashed changes
+

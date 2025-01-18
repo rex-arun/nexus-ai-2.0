@@ -1,16 +1,3 @@
-<<<<<<< Updated upstream
-import { useState } from 'react'
-import './App.css'
-import Chatbox from './components/Chatbox/Chatbox'
-
-function App() {
-
-  return (
-    <div>
-      <Chatbox/>
-    </div>
-  )
-=======
 import { useState } from "react";
 import "./App.css";
 import Chatbox from "./components/Chatbox/Chatbox";
@@ -74,14 +61,13 @@ function App() {
                             title="Home"
                             onClick={handleGoHome}
                         ></i>
-                        <i className="ri-moon-line" title="Theme"></i>
+                        {/* <i className="ri-moon-line" title="Theme"></i> */}
                         <ShareIcon />
                     </div>
                 )}
             </div>
         </ChatProvider>
     );
->>>>>>> Stashed changes
 }
 
 export default App

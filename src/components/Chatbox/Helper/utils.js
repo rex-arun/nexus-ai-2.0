@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export const generateBotResponse = async (message) => {
-    const userMessage = message.toLowerCase();
+export const generateBotResponse = async (message, isVoiceMode = false) => {
+    const userMessage = message.toLowerCase().replace(/nexa/g, "").trim();
 
     if (userMessage.includes("stop") || userMessage.includes("shut up")) {
         // Stop the speech synthesis immediately
@@ -18,154 +18,69 @@ export const generateBotResponse = async (message) => {
         userMessage == "hi"
     ) {
         return ["Hello! How can I help you"];
-    }
-    else if (userMessage.includes("how are you")) {
+    } else if (userMessage.includes("how are you")) {
         const responses = [
             "I'm doing great, thanks for asking! How about you?",
             "I'm just a bunch of code, but I’m feeling awesome!",
             "I'm functioning at full capacity, ready to assist you!",
         ];
         return [responses[Math.floor(Math.random() * responses.length)]];
-    }
-
-    // Are you human?
-    else if (userMessage.includes("are you human") || userMessage.includes("are you a human")) {
+    } else if (
+        userMessage.includes("are you human") ||
+        userMessage.includes("are you a human")
+    ) {
         const responses = [
             "I wish I could be, but nope, I’m just a bunch of code!",
             "Nope, I'm an AI assistant here to help you out!",
             "I’m not human, but I can chat like one! Does that count?",
         ];
         return [responses[Math.floor(Math.random() * responses.length)]];
-    }
-    
-    else if (userMessage.includes("you are awesome") || userMessage.includes("you are great")) {
+    } else if (
+        userMessage.includes("you are awesome") ||
+        userMessage.includes("you are great")
+    ) {
         const responses = [
             "You're pretty awesome yourself! Thanks for being so cool.",
             "Thank you! You're amazing too!",
-            "You're the best! I'm just here to help out."
+            "You're the best! I'm just here to help out.",
         ];
         return [responses[Math.floor(Math.random() * responses.length)]];
-    }
-        
-    else if (userMessage.includes("your name") || userMessage.includes("what is your name")) {
+    } else if (
+        userMessage.includes("your name") ||
+        userMessage.includes("what is your name")
+    ) {
         const responses = [
             "I’m Nexa, your friendly assistant! How can I help you today?",
             "My name is Nexa, but I’m happy to go by anything you like!",
-            "I’m Nexa, your chatbot assistant. Nice to meet you!"
+            "I’m Nexa, your chatbot assistant. Nice to meet you!",
         ];
         return [responses[Math.floor(Math.random() * responses.length)]];
-    }
-        
-    else if (userMessage.includes("can you do")|| userMessage.includes("you can do")) {
+    } else if (
+        userMessage.includes("can you do") ||
+        userMessage.includes("you can do")
+    ) {
         const responses = [
             "I can help with answering questions, chatting, and providing information!",
             "I’m here to assist with whatever you need—just ask away!",
-            "I can help with a variety of tasks, from answering questions to providing information and more!"
+            "I can help with a variety of tasks, from answering questions to providing information and more!",
         ];
         return [responses[Math.floor(Math.random() * responses.length)]];
-    }
-        
-    else if (
+    } else if (
         userMessage.includes("who are you") ||
         userMessage.includes("what are you")
     ) {
         return ["I am a chat assistant with Artificial Intelligence"];
-    } 
+    }
 
     // ========================== Small Game Feature ==========================
-    // else if (userMessage.includes("play a game")) {
-    //     console.log("User wants to play a game"); // Debug: Log game request
-
-    //     const gameOptions = [
-    //         "number guessing",
-    //         "rock paper scissors",
-    //         "tic tac toe",
-    //         "trivia challenge",
-    //         "word scramble",
-    //         "math quiz",
-    //         "memory test"
-    //     ];
-
-    //     // Default response for showing available games
-    //     if (userMessage.includes("play a game")) {
-    //         response = `🎮 Let's have some fun! Choose a game to play:\n- ${gameOptions.join("\n- ")}\nType the name of the game to start!`;
-    //         return response;
-    //     }
-
-    //     // Number Guessing Game
-    //     if (userMessage.includes("number guessing")) {
-    //         response = `🎲 Let's play a Number Guessing Game!\nI've picked a number between 1 and 100. Try to guess it by typing a number.`;
-    //         return response;
-    //     }
-
-    //     // Rock Paper Scissors
-    //     else if (userMessage.includes("rock paper scissors")) {
-    //         const choices = ["rock", "paper", "scissors"];
-    //         const botChoice = choices[Math.floor(Math.random() * choices.length)];
-    //         response = `✊✋✌️ Let's play Rock-Paper-Scissors!\nType your choice (rock, paper, or scissors), and I'll reveal mine.`;
-    //         return response;
-    //     }
-
-    //     // Tic Tac Toe
-    //     else if (userMessage.includes("tic tac toe")) {
-    //         response = `🎮 Let's play Tic Tac Toe!\nUnfortunately, I can't display the board here, but type your moves like 'A1', 'B2', etc., and I'll play along!`;
-    //         return response;
-    //     }
-
-    //     // Trivia Challenge
-    //     else if (userMessage.includes("trivia challenge")) {
-    //         const triviaQuestions = [
-    //             { question: "What is the capital of France?", answer: "paris" },
-    //             { question: "Who wrote 'Romeo and Juliet'?", answer: "shakespeare" },
-    //             { question: "What is 8 x 12?", answer: "96" },
-    //             { question: "Who painted the Mona Lisa?", answer: "da vinci" },
-    //             { question: "What is the largest planet in our solar system?", answer: "jupiter" },
-    //             { question: "What is the smallest country in the world?", answer: "vatican city" },
-    //             { question: "Which animal is known as the King of the Jungle?", answer: "lion" },
-    //             { question: "What is the largest ocean on Earth?", answer: "pacific" },
-    //             { question: "Who discovered gravity?", answer: "newton" },
-    //             { question: "What is the chemical symbol for gold?", answer: "au" },
-    //             { question: "In which year did the Titanic sink?", answer: "1912" },
-    //             { question: "What is the hardest natural substance on Earth?", answer: "diamond" },
-    //             { question: "Who was the first president of the United States?", answer: "george washington" },
-    //             { question: "What is the largest desert in the world?", answer: "sahara" },
-    //             { question: "What is the longest river in the world?", answer: "amazon" }
-    //         ];
-    //         const selectedTrivia = triviaQuestions[Math.floor(Math.random() * triviaQuestions.length)];
-    //         response = `🧠 Trivia Time!\n${selectedTrivia.question}\nType your answer:`;
-    //         return response;
-    //     }
-
-    //     // Word Scramble
-    //     else if (userMessage.includes("word scramble")) {
-    //         const words = ["javascript", "programming", "developer", "algorithm"];
-    //         const word = words[Math.floor(Math.random() * words.length)];
-    //         const scrambled = word.split("").sort(() => Math.random() - 0.5).join("");
-    //         response = `🔤 Word Scramble!\nUnscramble this word: ${scrambled}`;
-    //         return response;
-    //     }
-
-    //     // Math Quiz
-    //     else if (userMessage.includes("math quiz")) {
-    //         const num1 = Math.floor(Math.random() * 50) + 1;
-    //         const num2 = Math.floor(Math.random() * 50) + 1;
-    //         response = `➕ Math Quiz!\nWhat is ${num1} + ${num2}? Type your answer:`;
-    //         return response;
-    //     }
-
-    //     // Memory Test
-    //     else if (userMessage.includes("memory test")) {
-    //         const numbers = Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join(" ");
-    //         response = `🧠 Memory Test!\nMemorize these numbers: ${numbers}\nType them back after 10 seconds!`;
-    //         return response;
-    //     }
-
-    //     // Fallback if no game is chosen
-    //     else {
-    //         response = `🎮 Choose a game from the following options:\n- ${gameOptions.join("\n- ")}\nType the name of the game to start!`;
-    //         return response;
-    //     }
-    // }
+    else if (
+        userMessage.includes("play a game") ||
+        userMessage.includes("play game")
+    ) {
+        return [
+            "Available games: <br/> •  Rock Paper Seissors <br/> • Tic Tac Toe <br/> • Snake Game <br/>Just type 'play game_name' to start playing...",
+        ];
+    }
 
     // ============== Weather Functioning ====================
     else if (
@@ -186,19 +101,15 @@ export const generateBotResponse = async (message) => {
             location = userMessage.split(" at ")[1]?.trim();
         }
 
-        // Responses
         let responses = [];
 
-        // If input format is correct
         if (location) {
-            // Trying to fetch API
             try {
                 const response = await fetch(
                     `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${apiKey}`
                 );
                 const data = await response.json();
 
-                // If response is valid
                 if (data.cod === 200) {
                     const temp = data.main.temp;
                     const weatherCondition = data.weather[0].description;
@@ -218,10 +129,8 @@ export const generateBotResponse = async (message) => {
             responses.push(`Please provide a location.`);
         }
 
-        return responses; // Ensure to return the responses after the fetch call
+        return responses;
     }
-
-    // ===================== News =====================
 
     // ===================== News =====================
     else if (
@@ -326,7 +235,7 @@ export const generateBotResponse = async (message) => {
             .trim();
 
         // Replace 'x' with '*' for multiplication
-        cleanCommand = cleanCommand.replace(/\s*x\s*/, "*"); // Handle spaces around 'x'
+        cleanCommand = cleanCommand.replace(/\s*x\s*/, "*");
 
         let operands = cleanCommand.split(/\s*[\+\-\*\/]\s*/);
         let operators = cleanCommand.match(/[\+\-\*\/]/g);
@@ -365,12 +274,14 @@ export const generateBotResponse = async (message) => {
     }
 
     // ============== Reminder Functions ====================
+    // Add Reminder
     else if (
         (userMessage.includes("add") && userMessage.includes("reminder")) ||
-        (userMessage.includes("set") && userMessage.includes("set reminder")) ||
+        (userMessage.includes("set") && userMessage.includes("reminder")) ||
         (userMessage.includes("create") && userMessage.includes("reminder"))
     ) {
         const reminderText = userMessage.match(/reminder\s(.+)/i)?.[1]?.trim();
+        let response = [];
 
         if (reminderText) {
             // Save the reminder to local storage
@@ -378,16 +289,15 @@ export const generateBotResponse = async (message) => {
             reminders.push(reminderText);
             localStorage.setItem("reminders", JSON.stringify(reminders));
 
-            const response = `Reminder added: "${reminderText}"`;
-            appendMessage("assistant", response);
-            speak(response);
+            response.push(`Reminder added: "${reminderText}"`);
         } else {
-            const response =
-                "Please specify what you want to be reminded about.";
-            appendMessage("assistant", response);
-            speak(response);
+            response.push("Please specify what you want to be reminded about.");
         }
-    } else if (
+        return response;
+    }
+
+    // Show Reminders
+    else if (
         (userMessage.includes("show") && userMessage.includes("reminders")) ||
         (userMessage.includes("tell") &&
             userMessage.includes("my reminders")) ||
@@ -395,30 +305,32 @@ export const generateBotResponse = async (message) => {
     ) {
         // Fetch reminders from local storage
         const reminders = JSON.parse(localStorage.getItem("reminders")) || [];
+        let response = [];
 
         if (reminders.length > 0) {
-            const response = reminders
+            const rems = reminders
                 .map((reminder, index) => `${index + 1}. ${reminder}`)
                 .join("\n");
-            const assistantResponse = `You have the following reminders:\n${response}`;
-            appendMessage("assistant", assistantResponse);
-            speak(assistantResponse);
+            response.push(`You have the following reminders:\n${rems}`);
         } else {
-            const response = "You have no reminders.";
-            appendMessage("assistant", response);
-            speak(response);
+            response.push("You have no reminders.");
         }
-    } else if (
+
+        return response;
+    }
+
+    // Delete all reminders
+    else if (
         userMessage.includes("delete all reminders") ||
         userMessage.includes("clear all reminders")
     ) {
         // Clear all reminders from local storage
         localStorage.removeItem("reminders");
+        return ["All reminders have been deleted."];
+    }
 
-        const response = "All reminders have been deleted.";
-        appendMessage("assistant", response);
-        speak(response);
-    } else if (
+    // Delete a specific reminder
+    else if (
         userMessage.includes("delete reminder") ||
         userMessage.includes("remove reminder")
     ) {
@@ -431,30 +343,20 @@ export const generateBotResponse = async (message) => {
             if (match) {
                 const index = parseInt(match[0], 10) - 1; // Convert to zero-based index
                 if (index >= 0 && index < reminders.length) {
-                    const deletedReminder = reminders.splice(index, 1); // Remove the specific reminder
+                    const deletedReminder = reminders.splice(index, 1);
                     localStorage.setItem(
                         "reminders",
                         JSON.stringify(reminders)
                     );
-                    const response = `Deleted reminder: "${deletedReminder}"`;
-                    appendMessage("assistant", response);
-                    speak(response);
+                    return [`Deleted reminder: "${deletedReminder}"`];
                 } else {
-                    const response =
-                        "Invalid reminder number. Please try again.";
-                    appendMessage("assistant", response);
-                    speak(response);
+                    return ["Invalid reminder number. Please try again."];
                 }
             } else {
-                const response =
-                    "Please specify which reminder to delete by number.";
-                appendMessage("assistant", response);
-                speak(response);
+                return ["Please specify which reminder to delete by number."];
             }
         } else {
-            const response = "You have no reminders to delete.";
-            appendMessage("assistant", response);
-            speak(response);
+            return ["You have no reminders to delete."];
         }
     }
 
@@ -499,13 +401,11 @@ export const generateBotResponse = async (message) => {
 
     // =================== Else part (Gemini) =======================
     else {
-        // ======= Gemini Model =============
-
         let responses = [];
         let resultText;
 
         async function tasks() {
-            console.log(userMessage);
+            // console.log(userMessage);
             const genAI = new GoogleGenerativeAI(
                 "AIzaSyBFbh1m-8HNU0nW3s-wH2g34QEzwxXYgdI"
             );
@@ -514,15 +414,28 @@ export const generateBotResponse = async (message) => {
             });
 
             const prompt = userMessage;
-            const result = await model.generateContent(
-                `Your Prompt is: ${prompt} || Remember this thing: 1. We are using your API, so for our service try to generate output under 50 words if possible and you can increase if necessary. 2. You are a chat bot not an API, also do text formatting, don't add * and other symbols without meaning. 3. Don't include your personal information I provided to you if user didn't ask about it`
-            );
+
+            let result;
+
+            // Short reply for voice-mode
+            if (isVoiceMode) {
+                result = await model.generateContent(
+                    `My prompt: ${prompt} || Remember this thing: 1. Generate output under 30 words if possible and you can increase if necessary. 2. If you dont understand my questions just reply "Please try to rephrasing your query".`
+                );
+            }
+            else {
+                result = await model.generateContent(`${prompt} `);
+            }
+
             resultText = result.response.text();
-            console.log(resultText);
-            responses.push(`${resultText}`);
+            if (resultText.includes("try to rephrasing your query")) {
+                responses.push("Please try to rephrase your query.");
+            } else {
+                responses.push(`${resultText}`);
+            }
         }
 
-        await tasks(); // Ensure to await the tasks function
+        await tasks();
         return responses;
     }
 };

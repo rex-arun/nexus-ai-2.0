@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { handleUserInput, handleVoiceInput } from "./Helper/chatFunctions";
+import { useChat } from "./ChatContext";
 import "remixicon/fonts/remixicon.css";
 import "./Chatbox.css";
 import "./Chatbox2.css";
+import showToast from "../Helper/showToast";
+import generateImage from "../Helper/generateImage";
+import ChatWindowUI from "./ChatWindowUI";
 
 export default function Chatbox() {
     const [isTyping, setIsTyping] = useState(false);
     const [selectedPrompt, setSelectedPrompt] = useState(null);
-    const [messages, setMessages] = useState([]);
+    const { messages, setMessages } = useChat();
     const [chatStarted, setChatStarted] = useState(false);
     const [isVoiceMode, setIsVoiceMode] = useState(false);
     const [isListening, setIsListening] = useState(false);
@@ -17,6 +21,7 @@ export default function Chatbox() {
     const recognition = useRef(null);
     const lastBotResponse = useRef("");
     const [isMicOn, setIsMicOn] = useState(false);
+    const lastMessageRef = useRef(null);
 
     // ========= Initialize speech recognition API ==========
     useEffect(() => {
@@ -44,6 +49,9 @@ export default function Chatbox() {
                         chatContainerRef.current.scrollHeight;
                 }
             };
+            recognition.current.onerror = () => {
+                recognition.current.start();
+            };
         }
     }, []);
 
@@ -61,6 +69,63 @@ export default function Chatbox() {
             window.removeEventListener("keydown", handleSpacebarPress);
         };
     }, [isVoiceMode]);
+
+    // Effect to scroll
+    useEffect(() => {
+        const chatContainer = chatContainerRef.current;
+        const lastMessage = lastMessageRef.current;
+
+        if (chatContainer && lastMessage) {
+            // Get the position of the last message
+            const lastMessagePosition = lastMessage.getBoundingClientRect().top;
+            const chatContainerPosition =
+                chatContainer.getBoundingClientRect().top;
+
+            // Scroll to the position just above the last message
+            chatContainer.scrollTop =
+                lastMessagePosition -
+                chatContainerPosition +
+                chatContainer.scrollTop;
+        }
+    }, [messages, isVoiceMode]);
+
+    // Copy button for Code Block
+    useEffect(() => {
+        const copyButtons = document.querySelectorAll(".copy-button");
+        copyButtons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+                // Get the <pre> element
+                let codeBlock =
+                    event.target.previousElementSibling.previousElementSibling;
+
+                if (codeBlock) {
+                    const codeText = codeBlock;
+                    // console.log("Copying text:", codeText);
+                    copyToClipboard(codeText);
+                } else {
+                    console.error("No <pre> element found.");
+                }
+            });
+        });
+
+        return () => {
+            copyButtons.forEach((button) => {
+                button.removeEventListener("click", () => {});
+            });
+        };
+    }, [messages]);
+
+    // Copy text to clipboard
+    window.copyToClipboard = (text) => {
+        navigator.clipboard
+            .writeText(text.innerText)
+            .then(() => {
+                showToast("Code copied to clipboard!");
+            })
+            .catch((err) => {
+                console.error("Failed to copy: ", err);
+            });
+    };
 
     // Handle input change
     const handleInputChange = (event) => {
@@ -82,9 +147,57 @@ export default function Chatbox() {
     // =========== Send Input to Voice / Text / Image functions =============
     const sendMessage = async (inputValue) => {
         if (inputValue.trim() === "") return;
-
         setChatStarted(true);
 
+        // Game - Tic Tac Toe
+        if (inputValue.toLowerCase().includes("play tic tac") && !isVoiceMode) {
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "user", text: inputValue },
+                {
+                    sender: "bot",
+                    text: "Let's play Tic Tac Toe!",
+                    isTicTacToe: true,
+                },
+            ]);
+            setInputValue("");
+            setIsTyping(false);
+            return;
+        }
+
+        // Game - Snake Game
+        if (inputValue.toLowerCase().includes("play snake") && !isVoiceMode) {
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "user", text: inputValue },
+                {
+                    sender: "bot",
+                    text: "Let's play Snake Game!",
+                    isSnakeGame: true,
+                },
+            ]);
+            setInputValue("");
+            setIsTyping(false);
+            return;
+        }
+
+        // Game - Rock Paper Scissors
+        if (inputValue.toLowerCase().includes("play rock paper") && !isVoiceMode) {
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "user", text: inputValue },
+                {
+                    sender: "bot",
+                    text: "Let's play Rock Paper Scissors!",
+                    isRockPaperScissors: true,
+                },
+            ]);
+            setInputValue("");
+            setIsTyping(false);
+            return;
+        }
+
+        // Image - Generate image
         if (inputValue.startsWith("image/prompt:")) {
             setMessages((prevMessages) => [
                 ...prevMessages,
@@ -128,7 +241,10 @@ export default function Chatbox() {
                 ]);
                 console.error("Error generating image:", error);
             }
-        } else {
+        }
+
+        // Chat - Handle voice/text input
+        else {
             handleUserInput(
                 { key: "Enter", target: { value: inputValue } },
                 messages,
@@ -142,31 +258,6 @@ export default function Chatbox() {
 
         setInputValue("");
         setIsTyping(false);
-    };
-
-    // Hugging Face API Call(Text to Image)
-    const generateImage = async (prompt) => {
-        const token = "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"; // Make sure to set your token here
-        const response = await fetch(
-            "https://api-inference.huggingface.co/models/ZB-Tech/Text-to-Image",
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify({ inputs: prompt }),
-            }
-        );
-
-        if (response.ok) {
-            const result = await response.blob();
-            const imageUrl = URL.createObjectURL(result);
-            return imageUrl;
-        } else {
-            console.error("Error generating image:", response.status);
-            return null;
-        }
     };
 
     // Download the image
@@ -198,13 +289,12 @@ export default function Chatbox() {
     // Speak the response
     const speak = (response) => {
         if ("speechSynthesis" in window) {
-            // Check if the response contains "stop" or "shut up"
             if (
                 response.toLowerCase().includes("stop") ||
                 response.toLowerCase().includes("shut up")
             ) {
-                window.speechSynthesis.cancel(); // Stop any ongoing speech
-                return; // Exit the function
+                window.speechSynthesis.cancel();
+                return;
             }
 
             const utterance = new SpeechSynthesisUtterance(response);
@@ -216,14 +306,6 @@ export default function Chatbox() {
         }
     };
 
-    // Effect to scroll
-    useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop =
-                chatContainerRef.current.scrollHeight;
-        }
-    }, [messages, isVoiceMode]);
-
     // Toggle voice mode
     const toggleVoiceMode = () => {
         setIsVoiceMode(true);
@@ -231,197 +313,32 @@ export default function Chatbox() {
     };
 
     // Close voice mode
-    // Close voice mode
     const closeVoiceMode = () => {
         setIsVoiceMode(false);
         stopVoiceInput();
-        window.speechSynthesis.cancel(); // Stop any ongoing speech
+        window.speechSynthesis.cancel();
     };
 
     return (
-        <>
-            {/* ======= Voice Mode UI ========== */}
-            {isVoiceMode ? (
-                <div className={`voice-mode ${isMicOn ? "active" : ""}`}>
-                    {isMicOn ? (
-                        <p>Nexa is Listening..</p>
-                    ) : (
-                        <p>Nexa Stopped Listening..</p>
-                    )}
-
-                    <div className="voice-animation"></div>
-                    <div className="close-button" onClick={closeVoiceMode}>
-                        <i className="ri-close-line"></i>{" "}
-                    </div>
-                    <button
-                        className={`mic-button ${
-                            isMicOn ? "button-active" : "button-deactive"
-                        }`}
-                        onClick={() => {
-                            if (isMicOn) {
-                                stopVoiceInput();
-                            } else {
-                                startVoiceInput();
-                            }
-                        }}
-                    >
-                        <i
-                            className={`ri-mic-${
-                                isMicOn ? "fill" : "off-fill"
-                            }`}
-                        ></i>
-                    </button>
-                </div>
-            ) : (
-                <>
-                    {/* Header section (Render if mgs array is empty) */}
-                    {!chatStarted && (
-                        <div className="header-section">
-                            <h1>
-                                What's on Your Mind
-                                <br />
-                                I'm Here to Help...
-                            </h1>
-
-                            <div className="promt">
-                                <div
-                                    className="promt1"
-                                    onClick={() =>
-                                        setSelectedPrompt(
-                                            "Help me on my Project Report."
-                                        )
-                                    }
-                                >
-                                    <p>Help me on my Project Report.</p>
-                                </div>
-                                <div
-                                    className="promt2"
-                                    onClick={() =>
-                                        setSelectedPrompt(
-                                            "Plan a Road Trip with friends."
-                                        )
-                                    }
-                                >
-                                    <p>Plan a Road Trip with friends.</p>
-                                </div>
-                                <div
-                                    className="promt3"
-                                    onClick={() =>
-                                        setSelectedPrompt(
-                                            "How can I prepare for a technical associate interview?"
-                                        )
-                                    }
-                                >
-                                    <p>
-                                        How can I prepare for a technical
-                                        associate interview?
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* =============== Chat messages UI ============ */}
-                    <div className="chat-section" ref={chatContainerRef}>
-                        {messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`message ${message.sender} ${
-                                    message.className || ""
-                                }`}
-                            >
-                                {message.isLoading ? (
-                                    <div className="loading-dots">
-                                        <span className="dot"></span>
-                                        <span className="dot"></span>
-                                        <span className="dot"></span>
-                                    </div>
-                                ) : (
-                                    <p>{message.text}</p>
-                                )}
-                                {message.imageUrl && (
-                                    <div className="image-box">
-                                        <img
-                                            src={message.imageUrl}
-                                            alt="Generated"
-                                            className="mx-auto rounded-lg shadow-lg"
-                                        />
-                                        <button
-                                            onClick={() =>
-                                                downloadImage(message.imageUrl)
-                                            }
-                                            className="download-button"
-                                        >
-                                            <i class="ri-file-download-fill"></i>
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* ============ Input section ========= */}
-                    <div className="input-section-container">
-                        <div className="input-container">
-                            <input
-                                type="text"
-                                placeholder="Start a conversation..."
-                                value={inputValue}
-                                onChange={(e) => {
-                                    setInputValue(e.target.value);
-                                    handleInputChange(e);
-                                }}
-                                onKeyDown={handleUserInputWrapper}
-                                ref={inputRef}
-                            />
-
-                            <div className="icons">
-                                {!isTyping && (
-                                    <>
-                                        <i
-                                            className="ri-image-ai-fill"
-                                            onClick={() => {
-                                                const inputField =
-                                                    document.querySelector(
-                                                        ".input-container input"
-                                                    );
-                                                if (inputField) {
-                                                    inputField.value = `image/prompt: ${inputField.value}`;
-                                                    inputField.focus();
-                                                }
-                                            }}
-                                        ></i>
-                                        <i
-                                            className="ri-voice-ai-line"
-                                            onClick={toggleVoiceMode}
-                                        ></i>
-                                    </>
-                                )}
-
-                                {isTyping && (
-                                    <div className="typing-indicator">
-                                        <i
-                                            className="ri-send-plane-fill"
-                                            onClick={() => {
-                                                const inputValue =
-                                                    inputRef.current.value.trim();
-                                                sendMessage(inputValue);
-                                            }}
-                                        ></i>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="acknowledge">
-                            <p>
-                                NexusAI can make mistakes, double-check
-                                important stuff
-                            </p>
-                        </div>
-                    </div>
-                </>
-            )}
-        </>
+        <ChatWindowUI
+            isVoiceMode={isVoiceMode}
+            isMicOn={isMicOn}
+            chatStarted={chatStarted}
+            messages={messages}
+            inputValue={inputValue}
+            handleInputChange={handleInputChange}
+            handleUserInputWrapper={handleUserInputWrapper}
+            sendMessage={sendMessage}
+            toggleVoiceMode={toggleVoiceMode}
+            closeVoiceMode={closeVoiceMode}
+            downloadImage={downloadImage}
+            setSelectedPrompt={setSelectedPrompt}
+            lastMessageRef={lastMessageRef}
+            chatContainerRef={chatContainerRef}
+            inputRef={inputRef}
+            isTyping={isTyping}
+            setInputValue={setInputValue}
+            stopVoiceInput={stopVoiceInput}
+        />
     );
 }

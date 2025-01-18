@@ -104,7 +104,7 @@ export default function Home({ onGetStarted }) {
                 </div>
             </section>
 
-            {/* Contact Section */}
+            {/* Contact Section
             <section id="contact">
                 <h2>Contact Us</h2>
                 <p>We’re here to help! Reach out to us anytime.</p>
@@ -121,14 +121,14 @@ export default function Home({ onGetStarted }) {
                         <i className="ri-building-line"></i> Address: 123 NexusAI Lane, Tech City, TX
                     </p>
                     {/* Contact Form */}
-                    <form id="contactForm">
+                    {/* <form id="contactForm">
                         <input type="text" id="name" placeholder="Your Name" required />
                         <input type="email" id="email" placeholder="Your Email" required />
                         <textarea id="message" placeholder="Your Message" rows="4" required></textarea>
                         <button type="submit">Send</button>
                     </form>
                 </div>
-            </section>
+            </section>  */}
 
             {/* Footer Section */}
             <footer className="footer">
