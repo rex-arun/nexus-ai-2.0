@@ -404,13 +404,15 @@ export const generateBotResponse = async (message, isVoiceMode = false) => {
         let responses = [];
         let resultText;
 
+        // Old Key: "AIzaSyBFbh1m-8HNU0nW3s-wH2g34QEzwxXYgdI"
         async function tasks() {
             // console.log(userMessage);
             const genAI = new GoogleGenerativeAI(
-                "AIzaSyBFbh1m-8HNU0nW3s-wH2g34QEzwxXYgdI"
+                "AIzaSyCyV25-8SPmBCWZvWm4_DjnL2OnfC03PgI"
+                
             );
             const model = genAI.getGenerativeModel({
-                model: "gemini-1.5-flash",
+                model: "gemini-2.5-flash",
             });
 
             const prompt = userMessage;
