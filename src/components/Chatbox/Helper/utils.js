@@ -405,12 +405,13 @@ export const generateBotResponse = async (message, isVoiceMode = false) => {
         let resultText;
 
         async function tasks() {
+
             // console.log(userMessage);
-            const genAI = new GoogleGenerativeAI(
-                "AIzaSyBFbh1m-8HNU0nW3s-wH2g34QEzwxXYgdI"
-            );
+            API_KEY=import.meta.env.VITE_Gemini_API_KEY;
+
+            const genAI = new GoogleGenerativeAI(API_KEY);
             const model = genAI.getGenerativeModel({
-                model: "gemini-1.5-flash",
+                model: "gemini-2.5-flash",
             });
 
             const prompt = userMessage;
@@ -424,7 +425,7 @@ export const generateBotResponse = async (message, isVoiceMode = false) => {
                 );
             }
             else {
-                result = await model.generateContent(`${prompt} `);
+                result = await model.generateContent(`${prompt}`);
             }
 
             resultText = result.response.text();

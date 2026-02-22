@@ -1,6 +1,6 @@
 // Hugging Face API Call(Text to Image)
 const generateImage = async (prompt) => {
-    const token = "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"; // Make sure to set your token here
+    const token = import.meta.env.VITE__HuggingFace_Token; // Make sure to set your token here
     const response = await fetch(
         "https://api-inference.huggingface.co/models/ZB-Tech/Text-to-Image",
         {
