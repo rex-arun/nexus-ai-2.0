@@ -1,0 +1,95 @@
+.chat-section {
+   padding: 20px;
+   max-height: 80vh;
+   overflow-y: auto;
+   width: 60rem;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   /* background-color: red; */
+   position: absolute;
+   top: 0;
+   left: 50%;
+   transform: translateX(-50%);
+}
+
+.message {
+   padding: 10px;
+   border-radius: 15px;
+   max-width: 80%;
+   word-wrap: break-word;
+   font-size: 16px;
+   display: inline-block;
+}
+
+.message.user {
+   background-color: #4CAF50;
+   color: white;
+   align-self: flex-end;
+}
+
+.message.bot {
+   background-color: #2196F3;
+   color: white;
+   align-self: flex-start;
+}
+
+
+
+.voice-mode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.voice-animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.voice-animation .line {
+    width: 20px;
+    height: 4px;
+    margin: 5px;
+    background-color: white;
+    animation: bounce 1s infinite;
+}
+
+.voice-animation .line:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.voice-animation .line:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.voice-animation .line:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(1.5);
+    }
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+}
