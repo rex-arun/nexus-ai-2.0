@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "fast-levenshtein": "^3.0.0",
+    "jspdf": "^3.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remixicon": "^4.5.0"
+    "remixicon": "^4.5.0",
+    "require": "^0.4.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
